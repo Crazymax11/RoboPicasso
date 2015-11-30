@@ -16,12 +16,16 @@ GeneticAlgorithmProcessor::GeneticAlgorithmProcessor(): QObject()
 
     figures = 40;
     targetPath = ".";
+    isRunning = false;
+    generationIndex = 0;
+    QObject::connect(this,SIGNAL(startNewIteration()),
+                     this,SLOT(startIteration()));
 }
 
 
 void GeneticAlgorithmProcessor::start()
 {
-
+    isRunning = true;
     width = targetImage.width();
     height = targetImage.height();
     maxSize = width>height? height: width;
@@ -35,37 +39,10 @@ void GeneticAlgorithmProcessor::start()
         population.append(generateRandomObject());
         population[i].index = i;
     }
-    double bestResult = qInf();
+    bestResult = qInf();
     generationIndex = 0;
     QImage res(targetImage.width(), targetImage.height(), QImage::Format_ARGB32);
-    double prevBest = qInf();
-    while((generationIndex < generationsLimit))
-    {
-        double resultAfter;
-        qDebug() << QString("started %1 generation").arg(QString::number(generationIndex));
-        crossover();        
-        sortPopulation();
-        mutation();
-        sortPopulation();
-        selection();
-
-
-        generationIndex++;
-        bestResult = population[0].res;
-        QString toSave = targetPath + QString("\\") + QString::number(generationIndex) ;
-
-        if (bestResult < prevBest){
-            prevBest = bestResult;
-
-            qDebug() << QString("current best diff is %1").arg(bestResult);
-            toSave+=QString("-%1").arg(bestResult);
-            res.fill(QColor(255,255,255));
-            population[0].drawResult(&res);
-            toSave+= QString(".png");
-            res.save(toSave);
-        }
-
-    }
+    emit(startNewIteration());
 }
 
 GenAlgObject GeneticAlgorithmProcessor::generateRandomObject()
@@ -181,7 +158,7 @@ double GeneticAlgorithmProcessor::mutateValue(double val, double minVal){
     //зарандомить надо +- mutationAmount от 1000
     int diff = rand()%int(2*1000*mutationAmount) - int(1000*mutationAmount);
     // % делаем по возможному интервалу, т.е. если mVal 380, максимум val на самом деле не 1000 а 620
-    int newVal = mVal + (oldVal - mVal + diff + (1000-mVal))%(1000-mVal);
+    int newVal = mVal + (oldVal - mVal + diff +(1000-mVal))%(1000-mVal);
     double newRes = double(newVal)/1000;
     return newRes;
 }
@@ -192,12 +169,6 @@ Figure GeneticAlgorithmProcessor::mutateFigure(const Figure &b){
 
 
     result.opacity = mutateValue(result.opacity, minOpacity);
-//    result.opacity += double(qrand()%int(1000*mutationAmount*2) -1000*mutationAmount) /1000;
-//    if (result.opacity<minOpacity)
-//        result.opacity = minOpacity;
-//    else if (result.opacity>1)
-//            result.opacity = 1;
-
 
     result.x = mutateValue(result.x);
     result.y = mutateValue(result.y);
@@ -228,4 +199,38 @@ GenAlgObject GeneticAlgorithmProcessor::mutateObject(const GenAlgObject &b){
 //            result.figureList[i] = mutateFigure(result.figureList[i]);
 //    }
     return result;
+}
+
+
+QJsonArray GeneticAlgorithmProcessor::getPopulationInJSON(){
+    QJsonArray result;
+    for(int i=0;i<population.size();i++)
+        result.push_back(population.at(i).serializeToJson());
+    return result;
+}
+QJsonObject GeneticAlgorithmProcessor::getElementInJSON(int index){
+    return population.at(index).serializeToJson();
+}
+
+
+void GeneticAlgorithmProcessor::startIteration(){
+    generationIndex++;
+    qDebug() << QString("started %1 generation").arg(QString::number(generationIndex));
+    crossover();
+    sortPopulation();
+    mutation();
+    sortPopulation();
+    selection();
+
+    finishIteration();
+}
+
+void GeneticAlgorithmProcessor::finishIteration(){
+    double currentBestResult = population[0].res;
+    if (bestResult > currentBestResult){
+        bestResult = currentBestResult;
+        emit(newBestValue(bestResult));
+        qDebug() << QString("current best diff is %1").arg(bestResult);
+    }
+    emit(startNewIteration());
 }

@@ -57,3 +57,26 @@ bool GenAlgObject::operator<(GenAlgObject& obj2)
 {
     return this->res < obj2.res;
 }
+
+QJsonObject GenAlgObject::serializeToJson() const{
+    QJsonObject result;
+    QJsonArray figuresJSON;
+    for(int i=0;this->figureList.size();i++)
+        figuresJSON.append(figureList[i].serializeToJson());
+    result["figures"] = figuresJSON;
+    return result;
+}
+
+
+GenAlgObject::GenAlgObject(QJsonObject jsonobj){
+    loadFromJSON(jsonobj);
+}
+
+void GenAlgObject::loadFromJSON(QJsonObject jsonobj){
+    QJsonArray figuresJSON = jsonobj["figures"].toArray();
+    QJsonObject figure;
+    for(int i=0;i<figuresJSON.size();i++){
+        figureList.append(Figure(figuresJSON[i].toObject()));
+    }
+}
+

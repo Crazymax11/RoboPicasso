@@ -4,28 +4,31 @@
 #
 #-------------------------------------------------
 
-QT       += core qml quick widgets gui
+QT +=qml quick widgets gui
 
 TARGET = genImages
-CONFIG   += console
-CONFIG   -= app_bundle
 
-
+CONFIG   += c++14
 
 TEMPLATE = app
-
 
 SOURCES += main.cpp \
     mypainter.cpp \
     geneticalgorithmprocessor.cpp \
     genalgobject.cpp \
-    figure.cpp
+    figure.cpp \
+    QtJson/json.cpp \
+    robopicassodesktopapp.cpp \
+    bestresultimageprovider.cpp
 
 HEADERS += \
     mypainter.h \
     geneticalgorithmprocessor.h \
     genalgobject.h \
-    figure.h
+    figure.h \
+    QtJson/json.h \
+    robopicassodesktopapp.h \
+    bestresultimageprovider.h
 
 RESOURCES += \
     qml.qrc

@@ -1,6 +1,8 @@
 #ifndef FIGURE_H
 #define FIGURE_H
 #include <QImage>
+#include <QJsonObject>
+#include <QJsonArray>
 
 enum FigureTypes
 {
@@ -8,7 +10,7 @@ enum FigureTypes
     TRIANGLE,
     CIRCLE
 };
-
+static const QList<QString> FigureTypesNames = QList<QString>() << "SQUARE" << "TRIANGLE" << "CIRCLE";
 
 class Figure
 {
@@ -16,6 +18,7 @@ public:
     Figure();
     Figure(const Figure& mother, const Figure& father);
     Figure(FigureTypes type, double x, double y, double radius, QRgb color, double opacity, double angle);
+    Figure(QJsonObject jsonobj);
     static Figure createRandomFigure(double minOpacity, double radiusLim = 0.25);
 
 
@@ -26,7 +29,9 @@ public:
     QRgb color;
     double opacity; //0 to 1
     double angle; //0 to 1
-
+    QJsonObject serializeToJson() const;
+private:
+    void loadFromJSON(QJsonObject jsonobj);
 };
 
 #endif // FIGURE_H

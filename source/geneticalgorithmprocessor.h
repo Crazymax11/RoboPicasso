@@ -5,18 +5,70 @@
 #include "genalgobject.h"
 #include <QObject>
 
-class GeneticAlgorithmProcessor: QObject
+class GeneticAlgorithmProcessor: public QObject
 {
     Q_OBJECT
 signals:
     newBestValue(double value);
     newBestPopulationNumber(int num);
     finished();
+    startNewIteration();
+
 public slots:
     void start();
+    void setPopulationSize(int newsize){
+        populationSize=newsize;
+        if (newsize < population.size())
+            population = population.mid(0,newsize);
+    }
+    void setMutationChance(double newMutChance){mutationChance=newMutChance;}
+    void setMutationAmount(double newMutAmount){mutationAmount=newMutAmount;}
+    void setBestUntouchables(double newBestUntouchables){bestUntouchables=newBestUntouchables;}
+    void setMinimalOpacity(double newMinOpacity){minOpacity=newMinOpacity;}
+    void setGenerationsLimit(int newLimit){generationsLimit=newLimit;}
+    //работает перед стартом работы
+    void setFiguresNum(int figures){
+        if ((!isRunning)&&(generationIndex==0))
+            this->figures=figures;
+    }
+
+    int getCurrentIndex(){return generationIndex;}
 public:
     GeneticAlgorithmProcessor();
     QImage targetImage;
+
+
+    QImage* bestImage;
+    int width;
+    int height;
+    int maxSize;
+    QString targetPath;
+
+    QJsonArray getPopulationInJSON();
+    QJsonObject getElementInJSON(int index);
+    QList<GenAlgObject> population;
+private slots:
+    double FitnessFunction(GenAlgObject& obj);
+
+    //разделено, после финиша посылается сигнал. Сигнал становится в очередь -> можно в очереди обрабатывать изменение параметров, паузу и тд и тп
+    void startIteration();
+    void finishIteration();
+
+    void selection();
+    void crossover();
+    void mutation();
+
+    Figure mutateFigure(const Figure &b);
+    GenAlgObject mutateObject(const GenAlgObject &b);
+    void sortPopulation();
+    double mutateValue(double val, double minVal = 0);
+private:
+    int generationIndex;
+
+    GenAlgObject generateRandomObject();
+    bool compareObjects(GenAlgObject obj1, GenAlgObject obj2);
+    bool isRunning;
+    QImage* tempIm;
 
     // параметры
     int populationSize;
@@ -32,28 +84,7 @@ public:
 
     int figures;
     double bestResult;
-    QImage* bestImage;
-    int width;
-    int height;
-    int maxSize;
-    QString targetPath;
-private:
 
-    double FitnessFunction(GenAlgObject& obj);
-    void selection();
-    void crossover();
-    void mutation();
-    Figure mutateFigure(const Figure &b);
-    GenAlgObject mutateObject(const GenAlgObject &b);
-    void sortPopulation();
-    QList<GenAlgObject> population;
-    int generationIndex;
-
-    GenAlgObject generateRandomObject();
-    bool compareObjects(GenAlgObject obj1, GenAlgObject obj2);
-
-    QImage* tempIm;
-    double mutateValue(double val, double minVal = 0);
 };
 
 #endif // GENETICALGORITHMPROCESSOR_H

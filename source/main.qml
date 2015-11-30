@@ -9,13 +9,24 @@ ApplicationWindow {
     width: 1000
     height: 480
     property bool isRunning: false
-    property double mutationChance: mutationChanceSlider/100
-    property double mutationAmount: mutationAmountSlider/100
-    property double mutationFigures: mutationFiguresSlider/100
-    property double minimalOpacity: minimalOpacitySlider/100
-    property int populationNum: Math.round(populationNumSlider)
-    property int figuresNum: Math.round(figuresNumSlider)
+    property double mutationChance: mutationChanceSlider.value/100
+    property double mutationAmount: mutationAmountSlider.value/100
+    property double mutationFigures: mutationFiguresSlider.value/100
+    property double minimalOpacity: minimalOpacitySlider.value/100
+    property int populationNum: Math.round(populationNumSlider.value)
+    property int figuresNum: Math.round(figuresNumSlider.value)
     property url tarImage: openFile.fileUrl
+
+    property int bestResValue: 0
+
+    property string bestResultSource: "image://imageProvider/image.png"
+    signal start()
+    onStart: isRunning = true
+    function updateImage(){
+        bestResultSource = "";
+        bestResultSource = "image://imageProvider/image.png";
+    }
+
     id:root
     title: qsTr("Подборка фигур генетических алгоритмом")
     Row{
@@ -27,6 +38,12 @@ ApplicationWindow {
             height: parent.height - 2
             width: parent.width*0.7
             color: "black"
+            Image{
+                id: bestResult
+                anchors.fill: parent
+                source: root.isRunning? root.bestResultSource : openFile.fileUrl
+                cache: false
+            }
         }
         Rectangle
         {
@@ -123,9 +140,10 @@ ApplicationWindow {
                 }
 
                 Text{
-                    id: bestResult
+                    id: bestResultText
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    text: root.bestResValue
                 }
                 CheckBox{
                     id: saveEveryNewBest
@@ -143,6 +161,7 @@ ApplicationWindow {
                     text: root.isRunning? "pause": "start"
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    onClicked: root.start()
                 }
                 Button{
                     id: saveBtn

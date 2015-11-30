@@ -40,3 +40,35 @@ Figure Figure::createRandomFigure(double minOpacity, double radiusLim){
     figure.opacity = minOpacity + double(qrand()%int(1000-minOpacity*1000))/1000;
     return figure;
 }
+
+QJsonObject Figure::serializeToJson() const{
+    QJsonObject result;
+    result["type"] = FigureTypesNames[type];
+    result["radius"] = QString::number(radius);
+    result["x"] = QString::number(x);
+    result["y"] = QString::number(y);
+    result["angle"] = QString::number(angle);
+    result["opacity"] = QString::number(opacity);
+    QJsonObject colorJSON;
+    colorJSON["red"] = QString::number(qRed(color));
+    colorJSON["blue"] = QString::number(qBlue(color));
+    colorJSON["green"] = QString::number(qGreen(color));
+    result["color"]=colorJSON;
+    return result;
+}
+
+
+Figure::Figure(QJsonObject jsonobj){
+    loadFromJSON(jsonobj);
+}
+
+void Figure::loadFromJSON(QJsonObject jsonobj){
+    type = static_cast<FigureTypes>(FigureTypesNames.indexOf(jsonobj["type"].toString()));
+    radius = jsonobj["radius"].toDouble();
+    x = jsonobj["x"].toDouble();
+    y = jsonobj["y"].toDouble();
+    angle = jsonobj["angle"].toDouble();
+    opacity = jsonobj["opacity"].toDouble();
+    QJsonObject colorJSON = jsonobj["color"].toObject();
+    color = qRgb(colorJSON["red"].toInt(), colorJSON["blue"].toInt(), colorJSON["green"].toInt());
+}

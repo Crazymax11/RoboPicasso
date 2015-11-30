@@ -16,6 +16,8 @@ signals:
 
 public slots:
     void start();
+    void pause();
+    void resume();
     void setPopulationSize(int newsize){
         populationSize=newsize;
         if (newsize < population.size())
@@ -84,6 +86,8 @@ private:
 
     int figures;
     double bestResult;
+
+    bool isPaused;
 
 };
 

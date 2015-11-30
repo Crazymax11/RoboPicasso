@@ -9,6 +9,7 @@ ApplicationWindow {
     width: 1000
     height: 480
     property bool isRunning: false
+    property bool isStarted: false
     property double mutationChance: mutationChanceSlider.value/100
     property double mutationAmount: mutationAmountSlider.value/100
     property double mutationFigures: mutationFiguresSlider.value/100
@@ -21,7 +22,11 @@ ApplicationWindow {
 
     property string bestResultSource: "image://imageProvider/image.png"
     signal start()
-    onStart: isRunning = true
+    signal resume()
+    signal pause()
+    onStart: {isRunning = true; isStarted = true;}
+    onPause: {isRunning = false}
+    onResume: (isRunning = true)
     function updateImage(){
         bestResultSource = "";
         bestResultSource = "image://imageProvider/image.png";
@@ -41,7 +46,7 @@ ApplicationWindow {
             Image{
                 id: bestResult
                 anchors.fill: parent
-                source: root.isRunning? root.bestResultSource : openFile.fileUrl
+                source: root.isStarted ? root.bestResultSource : openFile.fileUrl
                 cache: false
             }
         }
@@ -158,10 +163,10 @@ ApplicationWindow {
 
                 Button{
                     id: startBtn
-                    text: root.isRunning? "pause": "start"
+                    text: root.isStarted? root.isRunning? "pause": "resume" : "start"
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    onClicked: root.start()
+                    onClicked: root.isStarted? root.isRunning? root.pause(): root.resume() : root.start()
                 }
                 Button{
                     id: saveBtn

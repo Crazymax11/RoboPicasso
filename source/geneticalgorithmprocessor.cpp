@@ -17,9 +17,10 @@ GeneticAlgorithmProcessor::GeneticAlgorithmProcessor(): QObject()
     figures = 40;
     targetPath = ".";
     isRunning = false;
+    isPaused = false;
     generationIndex = 0;
     QObject::connect(this,SIGNAL(startNewIteration()),
-                     this,SLOT(startIteration()));
+                     this,SLOT(startIteration()),Qt::QueuedConnection);
 }
 
 
@@ -232,5 +233,20 @@ void GeneticAlgorithmProcessor::finishIteration(){
         emit(newBestValue(bestResult));
         qDebug() << QString("current best diff is %1").arg(bestResult);
     }
-    emit(startNewIteration());
+    if (!isPaused)
+        emit(startNewIteration());
+}
+void GeneticAlgorithmProcessor::pause(){
+    if(isRunning){
+        isPaused = true;
+        isRunning = false;
+    }
+}
+
+void GeneticAlgorithmProcessor::resume(){
+    if(isPaused){
+        isPaused = false;
+        isRunning = true;
+        emit(startNewIteration());
+    }
 }

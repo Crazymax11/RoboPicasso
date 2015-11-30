@@ -17,6 +17,11 @@ RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplic
     proc->moveToThread(&procThread);
     QObject::connect(&procThread,SIGNAL(started()),
                      proc,SLOT(start()));
+    QObject::connect(rootQML,SIGNAL(pause()),
+                     proc,SLOT(pause()));
+    QObject::connect(rootQML,SIGNAL(resume()),
+                     proc,SLOT(resume()));
+
     QObject::connect(proc,SIGNAL(newBestValue(double)),
                      this,SLOT(drawBest(double)));
 }
@@ -62,7 +67,6 @@ void RobopicassoDesktopApp::start(){
     int figuresNum = rootQML->property("figuresNum").toInt();
     QString tarImage = rootQML->property("tarImage").toUrl().toLocalFile();
 
-    qDebug() << "mutChance" << mutChance;
     proc->setMutationChance(mutChance);
     proc->setMutationAmount(mutAmount);
     proc->setMinimalOpacity(minimalOpacity);
@@ -71,7 +75,7 @@ void RobopicassoDesktopApp::start(){
     proc->setMutationAmount(mutAmount);
     proc->targetImage.load(tarImage);
 
-    qDebug() <<"before start";
+
     procThread.start();
 }
 

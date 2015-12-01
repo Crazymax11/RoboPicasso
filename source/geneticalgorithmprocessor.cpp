@@ -311,8 +311,6 @@ void GeneticAlgorithmProcessor::shakePopulation(double range){
 void GeneticAlgorithmProcessor::shake(bool isBig){
     double shakeKoef = isBig* (1.0/population.size() + 0.002) + !isBig * 0.2;
     shakePopulation(shakeKoef);
-    int* shakesIndex[2];
-    shakesIndex[0] = &nextSmallShakeIndex;
-    shakesIndex[1] = &nextBigShakeIndex;
-    *shakesIndex[isBig]+= 5 + isBig*5*19;
+    nextSmallShakeIndex+=5;
+    nextBigShakeIndex+=100;
 }

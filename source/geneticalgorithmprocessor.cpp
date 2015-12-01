@@ -19,6 +19,9 @@ GeneticAlgorithmProcessor::GeneticAlgorithmProcessor(): QObject()
     isRunning = false;
     isPaused = false;
     generationIndex = 0;
+    bestResultIndex=0;
+    nextSmallShakeIndex = -1;
+    nextBigShakeIndex = -1;
     QObject::connect(this,SIGNAL(startNewIteration()),
                      this,SLOT(startIteration()),Qt::QueuedConnection);
 }
@@ -42,6 +45,7 @@ void GeneticAlgorithmProcessor::start()
     }
     bestResult = qInf();
     generationIndex = 0;
+    indexOfLastShake = 0;
     QImage res(targetImage.width(), targetImage.height(), QImage::Format_ARGB32);
     emit(startNewIteration());
 }
@@ -60,23 +64,30 @@ GenAlgObject GeneticAlgorithmProcessor::generateRandomObject()
 
 void GeneticAlgorithmProcessor::selection()
 {
-    population = population.mid(0,populationSize);
+    //возьмем топ 70%, и остальных рандомно добавим
+    population = population.mid(0,populationSize*0.7);
+    // счастливчики
+    while(population.size()<populationSize)
+        population.append(generateRandomObject());
 }
 
 void GeneticAlgorithmProcessor::crossover()
 {
     QList<GenAlgObject> tempList;
-    for(int i=0;i<population.size()-1;i+=2)
-        tempList.append(GenAlgObject(population[i], population[i+1]));
+    //скрещиваются рандомные 2 особи добирая популяцию до 4х
+    for(int i=0;i<populationSize*3;i++)
+        population.append(GenAlgObject(population[qrand()%populationSize],population[qrand()%populationSize]));
+//    for(int i=0;i<population.size()-1;i+=2)
+//        tempList.append(GenAlgObject(population[i], population[i+1]));
     //первые 3 особей самые крутые, мутируем их по 3 раз
 //    for(int i=0;i<3;i++)
 //        for(int j=0;j<3;j++)
 //            tempList.append(mutateObject(population[i]));
-    //добавим 5 рандомных объектов
-    for(int i=0;i<10;i++)
-        tempList.append(generateRandomObject());
-    for(int i=0;i<tempList.size();i++)
-        population.append(tempList[i]);
+//    //добавим 5 рандомных объектов
+//    for(int i=0;i<10;i++)
+//        tempList.append(generateRandomObject());
+//    for(int i=0;i<tempList.size();i++)
+//        population.append(tempList[i]);
 }
 
 void GeneticAlgorithmProcessor::mutation()
@@ -166,26 +177,43 @@ double GeneticAlgorithmProcessor::mutateValue(double val, double minVal){
 
 Figure GeneticAlgorithmProcessor::mutateFigure(const Figure &b){
     Figure result(b);
-    result.type =  static_cast<FigureTypes>(qrand()%3);
-
-
-    result.opacity = mutateValue(result.opacity, minOpacity);
-
-    result.x = mutateValue(result.x);
-    result.y = mutateValue(result.y);
-    result.angle = mutateValue(result.angle);
-    //максимум должен быть 0.25
-    result.radius = mutateValue(result.radius*4)/4;
+    QStringList mutationParametrs;
+    mutationParametrs << "type" << "position" << "size" << "color" << "angle" << "opacity";
+    QList<int> mutPars;
+    mutPars << 0 << 1 << 2 << 3 << 4 << 5;
 
     QRgb clr = result.color;
-    int newred;
-    int newgreen;
-    int newblue;
-    newred = mutateValue(double(qRed(clr))/255)*255;
-    newgreen = mutateValue(double(qGreen(clr))/255)*255;
-    newblue = mutateValue(double(qBlue(clr))/255)*255;
-    QColor newclr(newred,newgreen,newblue);
-    result.color = newclr.rgb();
+    for(int i=0;i<numOfParametrsToMutate;i++){
+        int par = qrand()%mutPars.size();
+        switch(mutPars[par]){
+        case 0:
+            result.type =  static_cast<FigureTypes>(qrand()%3);
+            break;
+        case 1:
+            result.x = mutateValue(result.x);
+            result.y = mutateValue(result.y);
+            break;
+        case 2:
+            //максимум должен быть 0.25
+            result.radius = mutateValue(result.radius*4)/4;
+            break;
+        case 3:
+            int newred;
+            int newgreen;
+            int newblue;
+            newred = mutateValue(double(qRed(clr))/255)*255;
+            newgreen = mutateValue(double(qGreen(clr))/255)*255;
+            newblue = mutateValue(double(qBlue(clr))/255)*255;
+            result.color = QColor(newred,newgreen,newblue).rgb();
+            break;
+        case 4:
+            result.angle = mutateValue(result.angle);
+            break;
+        case 5:
+            result.opacity = mutateValue(result.opacity, minOpacity);
+        }
+        mutPars.removeAt(par);
+    }
     return result;
 }
 GenAlgObject GeneticAlgorithmProcessor::mutateObject(const GenAlgObject &b){
@@ -222,20 +250,30 @@ QJsonObject GeneticAlgorithmProcessor::getElementInJSON(int index){
 
 void GeneticAlgorithmProcessor::startIteration(){
     increaseGenerationIndex();
+    //захардкодим 10 поколений без изменений и шейк 0.2
+    if (generationIndex==nextBigShakeIndex){
+            shake(true);
+        }
+    else if (generationIndex==nextSmallShakeIndex){
+        shake(false);
+    }
+
     qDebug() << QString("started %1 generation").arg(QString::number(generationIndex));
     crossover();
     sortPopulation();
     mutation();
     sortPopulation();
     selection();
-
     finishIteration();
 }
 
 void GeneticAlgorithmProcessor::finishIteration(){
     double currentBestResult = population[0].res;
     if (bestResult > currentBestResult){
+        bestResultIndex = generationIndex;
         bestResult = currentBestResult;
+        nextSmallShakeIndex=generationIndex+5;
+        nextBigShakeIndex=generationIndex+100;
         emit(newBestValue(bestResult));
         qDebug() << QString("current best diff is %1").arg(bestResult);
     }
@@ -261,4 +299,20 @@ void GeneticAlgorithmProcessor::resume(){
 void GeneticAlgorithmProcessor::increaseGenerationIndex(){
     generationIndex++;
     emit(generationIndexIncreased(generationIndex));
+}
+
+
+void GeneticAlgorithmProcessor::shakePopulation(double range){
+    qDebug() << QString("shake with ") + QString::number(range);
+    population = population.mid(0,populationSize*range);
+    while(population.size()<populationSize)
+        population.append(generateRandomObject());
+}
+void GeneticAlgorithmProcessor::shake(bool isBig){
+    double shakeKoef = isBig* (1.0/population.size() + 0.002) + !isBig * 0.2;
+    shakePopulation(shakeKoef);
+    int* shakesIndex[2];
+    shakesIndex[0] = &nextSmallShakeIndex;
+    shakesIndex[1] = &nextBigShakeIndex;
+    *shakesIndex[isBig]+= 5 + isBig*5*19;
 }

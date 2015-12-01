@@ -18,6 +18,9 @@ public slots:
     void start();
     void pause();
     void resume();
+
+    void shake(bool isBig);
+
     void setPopulationSize(int newsize){
         populationSize=newsize;
         if (newsize < population.size())
@@ -25,6 +28,7 @@ public slots:
     }
     void setMutationChance(double newMutChance){mutationChance=newMutChance;}
     void setMutationAmount(double newMutAmount){mutationAmount=newMutAmount;}
+    void setNumOfMutationParametrs(int newnum){numOfParametrsToMutate=newnum;}
     void setBestUntouchables(double newBestUntouchables){bestUntouchables=newBestUntouchables;}
     void setMinimalOpacity(double newMinOpacity){minOpacity=newMinOpacity;}
     void setGenerationsLimit(int newLimit){generationsLimit=newLimit;}
@@ -61,6 +65,9 @@ private slots:
     void crossover();
     void mutation();
 
+    //встряска, оставляет топ range, остальных заменяет на рандом
+    void shakePopulation(double range);
+
     Figure mutateFigure(const Figure &b);
     GenAlgObject mutateObject(const GenAlgObject &b);
     void sortPopulation();
@@ -80,6 +87,7 @@ private:
     double mutationChance;
     double mutationAmount; //от 0 до 1
     double mutationFiguresNum; // от 0 до 1
+    int numOfParametrsToMutate; //0-5
     // лучших не трогаем в процессе мутации
     int bestUntouchables;
 
@@ -92,7 +100,12 @@ private:
     double bestResult;
 
     bool isPaused;
+    int bestResultIndex;
+    int indexOfLastShake;
 
+
+    int nextSmallShakeIndex;
+    int nextBigShakeIndex;
 };
 
 #endif // GENETICALGORITHMPROCESSOR_H

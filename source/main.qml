@@ -3,17 +3,19 @@ import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.2
 import QtMultimedia 5.5
 import QtQuick.Layouts 1.1
-import "./QChart.qml" as Chart
 
 ApplicationWindow {
     visible: true
     width: 1000
     height: 480
+
+
     property bool isRunning: false
     property bool isStarted: false
     property double mutationChance: mutationChanceSlider.value/100
     property double mutationAmount: mutationAmountSlider.value/100
     property double mutationFigures: mutationFiguresSlider.value/100
+    property int mutationParametrsNum: mutationParametrsSlider.value
     property double minimalOpacity: minimalOpacitySlider.value/100
     property int populationNum: Math.round(populationNumSlider.value)
     property int figuresNum: Math.round(figuresNumSlider.value)
@@ -33,8 +35,13 @@ ApplicationWindow {
     onMutationAmountChanged: newMutationAmount(mutationAmount)
     signal newMutationFigures(double val)
     onMutationFiguresChanged: newMutationFigures(mutationFigures)
+    signal newMutationParametrsNum(int val)
+    onMutationParametrsNumChanged: newMutationParametrsNum(mutationParametrsNum)
     signal newMinimalOpacity(double val)
     onMinimalOpacityChanged: newMinimalOpacity(minimalOpacity)
+
+    signal shake(bool isBig)
+
 
     property int bestResValue: 0
     onBestResValueChanged: bestValueIndex=generationIndex
@@ -42,7 +49,7 @@ ApplicationWindow {
     signal start()
     signal resume()
     signal pause()
-    onStart: {isRunning = true; isStarted = true;}
+    onStart: {isRunning = true; isStarted = true;isImageShowing = true;}
     onPause: {isRunning = false}
     onResume: (isRunning = true)
     function updateImage(){
@@ -61,16 +68,13 @@ ApplicationWindow {
             height: parent.height - 2
             width: parent.width*0.7
             color: "black"
-            property bool isImageShowing: true
+            property bool isImageShowing: false
 
             Image{
                 id: bestResult
                 anchors.fill: parent
-                source: root.isStarted ? root.bestResultSource : openFile.fileUrl
+                source: imRect.isImageShowing ? root.bestResultSource : openFile.fileUrl
                 cache: false
-                visible: imRect.isImageShowing
-
-
                 RowLayout{
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -85,6 +89,8 @@ ApplicationWindow {
                         font.pointSize: 50
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
+                        style: Text.Outline;
+                        styleColor: "white"
                     }
 
                     Text{
@@ -96,10 +102,24 @@ ApplicationWindow {
                         font.pointSize: 50
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
+                        style: Text.Outline;
+                        styleColor: "white"
                     }
                 }
             }
             Button{
+                id: tarImageBtn
+                onClicked: imRect.isImageShowing=!imRect.isImageShowing
+                anchors.top: parent.top
+                anchors.right: parent.right
+                height: 20
+                width: 60
+                text: imRect.isImageShowing? "картинка" : "фигуры"
+            }
+
+            Button{
+                //пока уберем
+                visible: false
                 id: graphicBtn
                 anchors.top: parent.top
                 anchors.right: parent.right
@@ -163,6 +183,17 @@ ApplicationWindow {
                     stepSize: 0.25
                 }
                 Text{
+                    text: "количество мутирующих параметров : " + mutationParametrsSlider.value
+                }
+                Slider{
+                    id: mutationParametrsSlider
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    maximumValue: 6
+                    minimumValue: 1
+                    stepSize: 1
+                }
+                Text{
                     text: "минимальная видимость: " + minimalOpacitySlider.value +"%"
                 }
                 Slider{
@@ -216,6 +247,25 @@ ApplicationWindow {
                     id: saveEveryNewBestAsImage
                     enabled: saveEveryNewBest.checked
                     text: "сохранять как изображение"
+                }
+
+                RowLayout{
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Button{
+                        id: smallShake
+                        text: "встряска"
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        onClicked: root.shake(false)
+                    }
+                    Button{
+                        id: bigShake
+                        text: "катаклизм"
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        onClicked: root.shake(true)
+                    }
                 }
 
                 Button{

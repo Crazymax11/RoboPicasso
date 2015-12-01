@@ -3,13 +3,13 @@
 RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplication(argc, argv)
 {
     engine.addImageProvider("imageProvider", &imageProvider);
+
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     rootQML = engine.rootObjects()[0];
 
     QObject::connect(rootQML,SIGNAL(start()),
                      this,SLOT(start()));
-
 
     proc = new GeneticAlgorithmProcessor();
 
@@ -31,11 +31,18 @@ RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplic
                      proc,SLOT(setMutationAmount(double)));
     QObject::connect(rootQML,SIGNAL(newMutationFigures(double)),
                      proc,SLOT(setMutationFigures(double)));
+
+    QObject::connect(rootQML,SIGNAL(newMutationParametrsNum(int)),
+                     proc,SLOT(setNumOfMutationParametrs(int)));
+
     QObject::connect(rootQML,SIGNAL(newMinimalOpacity(double)),
                      proc,SLOT(setMinimalOpacity(double)));
 
     QObject::connect(proc,SIGNAL(generationIndexIncreased(int)),
                      rootQML,SIGNAL(setGenerationIndex(int)));
+
+    QObject::connect(rootQML,SIGNAL(shake(bool)),
+                     proc,SLOT(shake(bool)));
 }
 void RobopicassoDesktopApp::savePopulationToJSON(QString filepath){
     QJsonArray result = proc->getPopulationInJSON();

@@ -18,6 +18,16 @@ ApplicationWindow {
     property int figuresNum: Math.round(figuresNumSlider.value)
     property url tarImage: openFile.fileUrl
 
+    //не знаю как соединит нативный qml сигнал
+    signal newMutationChance(double val)
+    onMutationChanceChanged: newMutationChance(mutationChance)
+    signal newMutationAmount(double val)
+    onMutationAmountChanged: newMutationAmount(mutationAmount)
+    signal newMutationFigures(double val)
+    onMutationFiguresChanged: newMutationFigures(mutationFigures)
+    signal newMinimalOpacity(double val)
+    onMinimalOpacityChanged: newMinimalOpacity(minimalOpacity)
+
     property int bestResValue: 0
 
     property string bestResultSource: "image://imageProvider/image.png"
@@ -53,7 +63,7 @@ ApplicationWindow {
         Rectangle
         {
             height: parent.height - 2
-            width: parent.width*0.25 - 10
+            width: parent.width*0.3 - 10
             color: "transparent"
             border.width: 2
             border.color: "black"

@@ -24,6 +24,15 @@ RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplic
 
     QObject::connect(proc,SIGNAL(newBestValue(double)),
                      this,SLOT(drawBest(double)));
+
+    QObject::connect(rootQML,SIGNAL(newMutationChance(double)),
+                     proc,SLOT(setMutationChance(double)));
+    QObject::connect(rootQML,SIGNAL(newMutationAmount(double)),
+                     proc,SLOT(setMutationAmount(double)));
+    QObject::connect(rootQML,SIGNAL(newMutationFigures(double)),
+                     proc,SLOT(setMutationFigures(double)));
+    QObject::connect(rootQML,SIGNAL(newMinimalOpacity(double)),
+                     proc,SLOT(setMinimalOpacity(double)));
 }
 void RobopicassoDesktopApp::savePopulationToJSON(QString filepath){
     QJsonArray result = proc->getPopulationInJSON();
@@ -69,6 +78,7 @@ void RobopicassoDesktopApp::start(){
 
     proc->setMutationChance(mutChance);
     proc->setMutationAmount(mutAmount);
+    proc->setMutationFigures(mutationFigures);
     proc->setMinimalOpacity(minimalOpacity);
     proc->setFiguresNum(figuresNum);
     proc->setPopulationSize(populationNum);
@@ -90,4 +100,10 @@ void RobopicassoDesktopApp::drawBest(double val){
     QMetaObject::invokeMethod(rootQML, "updateImage",
             Q_RETURN_ARG(QVariant, returnedValue));
     rootQML->setProperty("bestResValue",val);
+}
+
+void RobopicassoDesktopApp::setMinimalOpacity(){
+    qDebug() << "changed";
+    double minimalOpacity = rootQML->property("minimalOpacity").toDouble();
+    proc->setMinimalOpacity(minimalOpacity);
 }

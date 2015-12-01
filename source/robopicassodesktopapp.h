@@ -36,6 +36,8 @@ public slots:
     void start();
 private slots:
     void drawBest(double val);
+
+    void setMinimalOpacity();
 private:
     QQmlApplicationEngine engine;
     QObject* rootQML;

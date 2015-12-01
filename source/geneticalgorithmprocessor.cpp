@@ -190,9 +190,15 @@ Figure GeneticAlgorithmProcessor::mutateFigure(const Figure &b){
 }
 GenAlgObject GeneticAlgorithmProcessor::mutateObject(const GenAlgObject &b){
     GenAlgObject result(b);
-    //а что если мутейтить одну фигуру?
-    int randIndex = qrand()%figures;
-    result.figureList[randIndex] = mutateFigure(result.figureList[randIndex]);
+//    //а что если мутейтить одну фигуру?
+//    int randIndex = qrand()%figures;
+//    result.figureList[randIndex] = mutateFigure(result.figureList[randIndex]);
+    for(int i=0;i<result.figureList.size();i++){
+        //по мат ожиданию все сойдется
+        if ((double(qrand()%100)/100) > mutationFiguresNum)
+            result.figureList[i] = mutateFigure(result.figureList[i]);
+    }
+
     //старый код с рандом мутейтом
 //    for(int i=0;i<result.figureList.size();i++){
 //        double randVal = double(qrand()%100)/100;

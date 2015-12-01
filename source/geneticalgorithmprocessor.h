@@ -28,6 +28,7 @@ public slots:
     void setBestUntouchables(double newBestUntouchables){bestUntouchables=newBestUntouchables;}
     void setMinimalOpacity(double newMinOpacity){minOpacity=newMinOpacity;}
     void setGenerationsLimit(int newLimit){generationsLimit=newLimit;}
+    void setMutationFigures(double newMutFigures){mutationFiguresNum=newMutFigures;}
     //работает перед стартом работы
     void setFiguresNum(int figures){
         if ((!isRunning)&&(generationIndex==0))
@@ -76,6 +77,7 @@ private:
     int populationSize;
     double mutationChance;
     double mutationAmount; //от 0 до 1
+    double mutationFiguresNum; // от 0 до 1
     // лучших не трогаем в процессе мутации
     int bestUntouchables;
 

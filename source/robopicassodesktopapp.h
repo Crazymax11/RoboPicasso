@@ -25,6 +25,7 @@ public:
 signals:
     newBestValue(double value);
     newBestPopulationNumber(int num);
+
     finished();
 public slots:
     void loadPopulationFromJSON(QString filepath);
@@ -38,6 +39,7 @@ private slots:
     void drawBest(double val);
 
     void setMinimalOpacity();
+
 private:
     QQmlApplicationEngine engine;
     QObject* rootQML;

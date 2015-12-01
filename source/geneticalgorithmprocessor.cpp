@@ -221,7 +221,7 @@ QJsonObject GeneticAlgorithmProcessor::getElementInJSON(int index){
 
 
 void GeneticAlgorithmProcessor::startIteration(){
-    generationIndex++;
+    increaseGenerationIndex();
     qDebug() << QString("started %1 generation").arg(QString::number(generationIndex));
     crossover();
     sortPopulation();
@@ -255,4 +255,10 @@ void GeneticAlgorithmProcessor::resume(){
         isRunning = true;
         emit(startNewIteration());
     }
+}
+
+
+void GeneticAlgorithmProcessor::increaseGenerationIndex(){
+    generationIndex++;
+    emit(generationIndexIncreased(generationIndex));
 }

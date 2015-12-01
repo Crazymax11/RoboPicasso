@@ -33,6 +33,9 @@ RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplic
                      proc,SLOT(setMutationFigures(double)));
     QObject::connect(rootQML,SIGNAL(newMinimalOpacity(double)),
                      proc,SLOT(setMinimalOpacity(double)));
+
+    QObject::connect(proc,SIGNAL(generationIndexIncreased(int)),
+                     rootQML,SIGNAL(setGenerationIndex(int)));
 }
 void RobopicassoDesktopApp::savePopulationToJSON(QString filepath){
     QJsonArray result = proc->getPopulationInJSON();

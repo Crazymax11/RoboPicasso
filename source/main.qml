@@ -3,6 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.2
 import QtMultimedia 5.5
 import QtQuick.Layouts 1.1
+import "./QChart.qml" as Chart
 
 ApplicationWindow {
     visible: true
@@ -17,6 +18,13 @@ ApplicationWindow {
     property int populationNum: Math.round(populationNumSlider.value)
     property int figuresNum: Math.round(figuresNumSlider.value)
     property url tarImage: openFile.fileUrl
+    property int generationIndex: 0
+    property int bestValueIndex: 0
+
+
+    signal setGenerationIndex(int num)
+    onSetGenerationIndex: generationIndex=num
+
 
     //не знаю как соединит нативный qml сигнал
     signal newMutationChance(double val)
@@ -29,7 +37,7 @@ ApplicationWindow {
     onMinimalOpacityChanged: newMinimalOpacity(minimalOpacity)
 
     property int bestResValue: 0
-
+    onBestResValueChanged: bestValueIndex=generationIndex
     property string bestResultSource: "image://imageProvider/image.png"
     signal start()
     signal resume()
@@ -53,13 +61,55 @@ ApplicationWindow {
             height: parent.height - 2
             width: parent.width*0.7
             color: "black"
+            property bool isImageShowing: true
+
             Image{
                 id: bestResult
                 anchors.fill: parent
                 source: root.isStarted ? root.bestResultSource : openFile.fileUrl
                 cache: false
+                visible: imRect.isImageShowing
+
+
+                RowLayout{
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    height: parent.height* 0.15
+                    Text{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        id: generationindexText
+                        fontSizeMode: Text.Fit
+                        text: unchangedBestInsteadGenNumCheckBox.checked? "поколений без улучшений " + (root.generationIndex - root.bestValueIndex) : "текущее поколение " + root.generationIndex
+                        font.pointSize: 50
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    Text{
+                        id: bestResultText
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        fontSizeMode: Text.Fit
+                        text: "лучший результат " + root.bestResValue
+                        font.pointSize: 50
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                }
+            }
+            Button{
+                id: graphicBtn
+                anchors.top: parent.top
+                anchors.right: parent.right
+                height: 20
+                width: 60
+                text: imRect.isImageShowing? "график" : "изображение"
+                onClicked: imRect.isImageShowing=!imRect.isImageShowing
             }
         }
+
         Rectangle
         {
             height: parent.height - 2
@@ -153,12 +203,9 @@ ApplicationWindow {
                     value: 40
                     stepSize: 1
                 }
-
-                Text{
-                    id: bestResultText
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    text: root.bestResValue
+                CheckBox{
+                    id: unchangedBestInsteadGenNumCheckBox
+                    text: "Показывать количество поколений стагнации"
                 }
                 CheckBox{
                     id: saveEveryNewBest

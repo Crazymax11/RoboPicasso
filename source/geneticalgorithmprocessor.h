@@ -13,7 +13,7 @@ signals:
     newBestPopulationNumber(int num);
     finished();
     startNewIteration();
-
+    generationIndexIncreased(int index);
 public slots:
     void start();
     void pause();
@@ -65,6 +65,8 @@ private slots:
     GenAlgObject mutateObject(const GenAlgObject &b);
     void sortPopulation();
     double mutateValue(double val, double minVal = 0);
+
+    void increaseGenerationIndex();
 private:
     int generationIndex;
 

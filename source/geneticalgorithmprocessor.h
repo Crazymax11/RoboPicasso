@@ -35,6 +35,11 @@ public slots:
     void setMutationFigures(double newMutFigures){mutationFiguresNum=newMutFigures;}
     void setPopulationCrossoverKoef(int newk){crossoverPopulationK=newk;}
     void setPopulationSelectionKoef(double newk){selectionPopulationK=newk;}
+    void setSmallShakeRange(double newrange){smallShakeRange=newrange;}
+    void setBigShakeRange(int newrange){bigShakeRange=newrange;}
+    void setSmallShakeInterval(int newInterval){smallShakeInterval=newInterval;}
+    void setBigShakeInterval(int newInterval){bigShakeInterval=newInterval;}
+
     //работает перед стартом работы
     void setFiguresNum(int figures){
         if ((!isRunning)&&(generationIndex==0))
@@ -69,6 +74,7 @@ private slots:
 
     //встряска, оставляет топ range, остальных заменяет на рандом
     void shakePopulation(double range);
+    void shakePopulation(int range);
 
     Figure mutateFigure(const Figure &b);
     GenAlgObject mutateObject(const GenAlgObject &b);
@@ -108,6 +114,10 @@ private:
 
     int nextSmallShakeIndex;
     int nextBigShakeIndex;
+    int bigShakeInterval;
+    int smallShakeInterval;
+    int bigShakeRange;
+    double smallShakeRange;
 
     int crossoverPopulationK;
     double selectionPopulationK;

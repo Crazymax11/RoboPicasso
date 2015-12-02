@@ -63,6 +63,15 @@ RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplic
                      proc,SLOT(setPopulationCrossoverKoef(int)));
     QObject::connect(rootQML,SIGNAL(setPopulationSelectionKoef(double)),
                      proc,SLOT(setPopulationSelectionKoef(double)));
+
+    QObject::connect(rootQML,SIGNAL(setSmallShakeRange(double)),
+                     proc,SLOT(setSmallShakeRange(double)));
+    QObject::connect(rootQML,SIGNAL(setBigShakeRange(int)),
+                     proc,SLOT(setBigShakeRange(int)));
+    QObject::connect(rootQML,SIGNAL(setSmallShakeInterval(int)),
+                     proc,SLOT(setSmallShakeInterval(int)));
+    QObject::connect(rootQML,SIGNAL(setBigShakeInterval(int)),
+                     proc,SLOT(setBigShakeInterval(int)));
 }
 void RobopicassoDesktopApp::savePopulationToJSON(QString filepath){
     QJsonArray result = proc->getPopulationInJSON();

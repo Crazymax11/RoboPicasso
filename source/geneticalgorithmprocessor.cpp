@@ -26,6 +26,10 @@ GeneticAlgorithmProcessor::GeneticAlgorithmProcessor(): QObject()
     crossoverPopulationK = 4;
     selectionPopulationK = 0.7;
     numOfParametrsToMutate = 1;
+    bigShakeRange = 1;
+    smallShakeRange = 0.2;
+    smallShakeInterval = 5;
+    bigShakeInterval = 100;
     QObject::connect(this,SIGNAL(startNewIteration()),
                      this,SLOT(startIteration()),Qt::QueuedConnection);
 }
@@ -276,8 +280,8 @@ void GeneticAlgorithmProcessor::finishIteration(){
     if (bestResult > currentBestResult){
         bestResultIndex = generationIndex;
         bestResult = currentBestResult;
-        nextSmallShakeIndex=generationIndex+5;
-        nextBigShakeIndex=generationIndex+100;
+        nextSmallShakeIndex=generationIndex+smallShakeInterval;
+        nextBigShakeIndex=generationIndex+bigShakeInterval;
         emit(newBestValue(bestResult));
         qDebug() << QString("current best diff is %1").arg(bestResult);
     }
@@ -305,7 +309,12 @@ void GeneticAlgorithmProcessor::increaseGenerationIndex(){
     emit(generationIndexIncreased(generationIndex));
 }
 
-
+void GeneticAlgorithmProcessor::shakePopulation(int range){
+    qDebug() << QString("shake with ") + QString::number(range);
+    population = population.mid(0,range);
+    while(population.size()<populationSize)
+        population.append(generateRandomObject());
+}
 void GeneticAlgorithmProcessor::shakePopulation(double range){
     qDebug() << QString("shake with ") + QString::number(range);
     population = population.mid(0,populationSize*range);
@@ -313,11 +322,12 @@ void GeneticAlgorithmProcessor::shakePopulation(double range){
         population.append(generateRandomObject());
 }
 void GeneticAlgorithmProcessor::shake(bool isBig){
-    double shakeKoef = isBig* (1.0/population.size() + 0.002) + !isBig * 0.2;
-    shakePopulation(shakeKoef);
-    if(isBig){
-        nextSmallShakeIndex=nextBigShakeIndex;
-        nextBigShakeIndex+=100;
+    if (isBig){
+        shakePopulation(bigShakeRange);
+        nextBigShakeIndex=generationIndex+bigShakeInterval;
     }
-    nextSmallShakeIndex+=5;
+    else{
+        shakePopulation(smallShakeRange);
+    }
+    nextSmallShakeIndex=generationIndex+smallShakeInterval;
 }

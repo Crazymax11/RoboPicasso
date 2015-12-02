@@ -60,6 +60,20 @@ ApplicationWindow {
 
     signal shake(bool isBig)
 
+    property double smallShakeRange: smallShakeRangeSlider.value
+    property int bigShakeRange: bigShakeRangeSlider.value
+    property int smallShakeInterval: smallShakeIntervalSlider.value
+    property int bigShakeInterval: bigShakeIntervalSlider.value
+
+    signal setSmallShakeRange(double newrange)
+    signal setBigShakeRange(int newrange)
+    signal setSmallShakeInterval(int newinterval)
+    signal setBigShakeInterval(int newinterval)
+
+    onSmallShakeRangeChanged: setSmallShakeRange(smallShakeRange)
+    onSmallShakeIntervalChanged: setSmallShakeInterval(smallShakeInterval)
+    onBigShakeIntervalChanged: setBigShakeInterval(bigShakeInterval)
+    onBigShakeRangeChanged: setBigShakeRange(bisShakeRange)
 
     property int bestResValue: 0
     onBestResValueChanged: bestValueIndex=generationIndex
@@ -289,6 +303,18 @@ ApplicationWindow {
                     id: unchangedBestInsteadGenNumCheckBox
                     text: "Показывать количество поколений стагнации"
                 }
+
+                Row{
+                    Column{
+
+                    }
+                    Column{
+
+                    }
+                }
+
+
+
                 RowLayout{
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -354,6 +380,79 @@ ApplicationWindow {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
                                     onClicked: saveSettingsWindow.hide()
+                                }
+                            }
+                        }
+                    }
+                    Button{
+                        id: shakeSettingsButton
+                        text:"shake settings"
+                        onClicked: shakeSettingsWindow.show()
+                        Window{
+                            id: shakeSettingsWindow
+                            ColumnLayout{
+                                anchors.fill: parent
+                                Text{
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    text: "выжившие после встряски: " + (smallShakeRangeSlider.value*100)/100
+                                }
+                                Slider{
+                                    id: smallShakeRangeSlider
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    minimumValue: 0
+                                    maximumValue: 1
+                                    value: 0.2
+                                    stepSize: 0.05
+                                }
+                                Text{
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    text: "интервал встряски: " + smallShakeIntervalSlider.value
+                                }
+                                Slider{
+                                    id: smallShakeIntervalSlider
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    minimumValue: 0
+                                    maximumValue: 500
+                                    value: 5
+                                    stepSize: 1
+                                }
+                                Text{
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    text: "выжившие после катаклизма: " + bigShakeRangeSlider.value
+                                }
+                                Slider{
+                                    id: bigShakeRangeSlider
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    minimumValue: 0
+                                    maximumValue: populationNumSlider.value
+                                    value: 1
+                                    stepSize: 1
+                                }
+                                Text{
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    text: "интервал катаклизма: " + bigShakeIntervalSlider.value
+                                }
+                                Slider{
+                                    id: bigShakeIntervalSlider
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    minimumValue: 0
+                                    maximumValue: 500
+                                    value: 100
+                                    stepSize: 1
+                                }
+                                Button{
+                                    text: "apply"
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    onClicked: shakeSettingsWindow.hide()
                                 }
                             }
                         }

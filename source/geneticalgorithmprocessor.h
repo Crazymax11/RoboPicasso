@@ -33,6 +33,8 @@ public slots:
     void setMinimalOpacity(double newMinOpacity){minOpacity=newMinOpacity;}
     void setGenerationsLimit(int newLimit){generationsLimit=newLimit;}
     void setMutationFigures(double newMutFigures){mutationFiguresNum=newMutFigures;}
+    void setPopulationCrossoverKoef(int newk){crossoverPopulationK=newk;}
+    void setPopulationSelectionKoef(double newk){selectionPopulationK=newk;}
     //работает перед стартом работы
     void setFiguresNum(int figures){
         if ((!isRunning)&&(generationIndex==0))
@@ -106,6 +108,9 @@ private:
 
     int nextSmallShakeIndex;
     int nextBigShakeIndex;
+
+    int crossoverPopulationK;
+    double selectionPopulationK;
 };
 
 #endif // GENETICALGORITHMPROCESSOR_H

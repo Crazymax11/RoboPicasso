@@ -41,6 +41,7 @@ public slots:
 
     void setSaveFlag(bool saveAll);
     void setSavePath(QUrl newpath);
+
 private slots:
     void drawBest(double val);
     void saveBest();

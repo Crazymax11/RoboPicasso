@@ -58,6 +58,11 @@ RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplic
 
     QObject::connect(rootQML,SIGNAL(setSavePath(QUrl)),
                      this,SLOT(setSavePath(QUrl)));
+
+    QObject::connect(rootQML,SIGNAL(setPopulationCrossoverKoef(int)),
+                     proc,SLOT(setPopulationCrossoverKoef(int)));
+    QObject::connect(rootQML,SIGNAL(setPopulationSelectionKoef(double)),
+                     proc,SLOT(setPopulationSelectionKoef(double)));
 }
 void RobopicassoDesktopApp::savePopulationToJSON(QString filepath){
     QJsonArray result = proc->getPopulationInJSON();

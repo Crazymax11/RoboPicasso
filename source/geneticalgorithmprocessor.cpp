@@ -22,6 +22,10 @@ GeneticAlgorithmProcessor::GeneticAlgorithmProcessor(): QObject()
     bestResultIndex=0;
     nextSmallShakeIndex = -1;
     nextBigShakeIndex = -1;
+
+    crossoverPopulationK = 4;
+    selectionPopulationK = 0.7;
+    numOfParametrsToMutate = 1;
     QObject::connect(this,SIGNAL(startNewIteration()),
                      this,SLOT(startIteration()),Qt::QueuedConnection);
 }
@@ -64,8 +68,8 @@ GenAlgObject GeneticAlgorithmProcessor::generateRandomObject()
 
 void GeneticAlgorithmProcessor::selection()
 {
-    //возьмем топ 70%, и остальных рандомно добавим
-    population = population.mid(0,populationSize*0.7);
+    //возьмем топ selectionPopulationK, и остальных рандомно добавим
+    population = population.mid(0,populationSize*selectionPopulationK);
     // счастливчики
     while(population.size()<populationSize)
         population.append(generateRandomObject());
@@ -74,8 +78,8 @@ void GeneticAlgorithmProcessor::selection()
 void GeneticAlgorithmProcessor::crossover()
 {
     QList<GenAlgObject> tempList;
-    //скрещиваются рандомные 2 особи добирая популяцию до 4х
-    for(int i=0;i<populationSize*3;i++)
+    //скрещиваются рандомные 2 особи добирая популяцию до crossoverPopulationK
+    for(int i=0;i<populationSize*crossoverPopulationK;i++)
         population.append(GenAlgObject(population[qrand()%populationSize],population[qrand()%populationSize]));
 //    for(int i=0;i<population.size()-1;i+=2)
 //        tempList.append(GenAlgObject(population[i], population[i+1]));

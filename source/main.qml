@@ -18,12 +18,21 @@ ApplicationWindow {
     property int mutationParametrsNum: mutationParametrsSlider.value
     property double minimalOpacity: minimalOpacitySlider.value/100
     property int populationNum: Math.round(populationNumSlider.value)
+    property int populationCrossoverKoef: populationCrossoverSlider.value
+    property double populationSelectionKoef: populationSelectionSlider.value
+
     property int figuresNum: Math.round(figuresNumSlider.value)
     property url tarImage: openFile.fileUrl
     property int generationIndex: 0
     property int bestValueIndex: 0
     property bool saveAll: saveSettingsWindow.saveEveryNewBest
     property url savePath: saveSettingsWindow.pathToSave
+
+    onPopulationCrossoverKoefChanged: setPopulationCrossoverKoef(populationCrossoverKoef)
+    signal setPopulationCrossoverKoef(int num)
+
+    onPopulationSelectionKoefChanged: setPopulationSelectionKoef(populationSelectionKoef)
+    signal setPopulationSelectionKoef(double num)
 
     onSavePathChanged: setSavePath(savePath)
     signal setSavePath(url newpath)
@@ -168,6 +177,7 @@ ApplicationWindow {
                     id: mutationChanceSlider
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    value: 100
                     maximumValue: 100
                     stepSize: 0.25
                 }
@@ -178,6 +188,7 @@ ApplicationWindow {
                     id: mutationAmountSlider
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    value: 12.5
                     maximumValue: 100
                     stepSize: 0.25
                 }
@@ -188,6 +199,7 @@ ApplicationWindow {
                     id: mutationFiguresSlider
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    value: 5
                     maximumValue: 100
                     stepSize: 0.25
                 }
@@ -200,6 +212,7 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     maximumValue: 6
                     minimumValue: 1
+                    value: 1
                     stepSize: 1
                 }
                 Text{
@@ -210,6 +223,7 @@ ApplicationWindow {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     maximumValue: 100
+                    value: 90
                     stepSize: 0.25
                 }
 
@@ -227,6 +241,34 @@ ApplicationWindow {
                     maximumValue: 200
                     value: 40
                     stepSize: 1
+                }
+                Text{
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "Предел расширения популяции: " + populationCrossoverSlider.value
+                }
+                Slider{
+                    id: populationCrossoverSlider
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    minimumValue: 1
+                    maximumValue: 10
+                    value: 4
+                    stepSize: 0.25
+                }
+                Text{
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "Остаток популяции после селекции: " + Math.round(populationSelectionSlider.value*100)/100
+                }
+                Slider{
+                    id: populationSelectionSlider
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    minimumValue: 0
+                    maximumValue: 1
+                    value: 0.7
+                    stepSize: 0.01
                 }
                 Text{
                     id: figuresNum

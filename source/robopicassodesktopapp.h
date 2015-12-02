@@ -11,6 +11,8 @@
 #include <QColor>
 #include <QThread>
 #include "bestresultimageprovider.h"
+#include <QDir>
+#include <QFile>
 class RobopicassoDesktopApp : public QApplication
 {
     Q_OBJECT
@@ -35,12 +37,19 @@ public slots:
     void pause();
     void resume();
     void start();
+
+
+    void setSaveFlag(bool saveAll);
+    void setSavePath(QUrl newpath);
 private slots:
     void drawBest(double val);
+    void saveBest();
 
     void setMinimalOpacity();
 
 private:
+    bool saveAll;
+    QString pathToSave;
     QQmlApplicationEngine engine;
     QObject* rootQML;
     GeneticAlgorithmProcessor* proc;

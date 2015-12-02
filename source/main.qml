@@ -3,7 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.2
 import QtMultimedia 5.5
 import QtQuick.Layouts 1.1
-
+import QtQuick.Window 2.2
 ApplicationWindow {
     visible: true
     width: 1000
@@ -22,7 +22,16 @@ ApplicationWindow {
     property url tarImage: openFile.fileUrl
     property int generationIndex: 0
     property int bestValueIndex: 0
+    property bool saveAll: saveSettingsWindow.saveEveryNewBest
+    property url savePath: saveSettingsWindow.pathToSave
 
+    onSavePathChanged: setSavePath(savePath)
+    signal setSavePath(url newpath)
+
+    signal setSaveAll(bool newval)
+    onSaveAllChanged: setSaveAll(saveAll)
+
+    signal saveCurrentBest();
 
     signal setGenerationIndex(int num)
     onSetGenerationIndex: generationIndex=num
@@ -238,17 +247,6 @@ ApplicationWindow {
                     id: unchangedBestInsteadGenNumCheckBox
                     text: "Показывать количество поколений стагнации"
                 }
-                CheckBox{
-                    id: saveEveryNewBest
-                    text: "сохранять каждый найденный лучший"
-                    onCheckedChanged: if (!checked) saveEveryNewBestAsImage.checked = false
-                }
-                CheckBox{
-                    id: saveEveryNewBestAsImage
-                    enabled: saveEveryNewBest.checked
-                    text: "сохранять как изображение"
-                }
-
                 RowLayout{
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -275,10 +273,49 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     onClicked: root.isStarted? root.isRunning? root.pause(): root.resume() : root.start()
                 }
-                Button{
-                    id: saveBtn
-                    enabled: !root.isRunning
-                    text: "save"
+                Row{
+                    Button{
+                        id: saveBtn
+                        text: "save"
+                        onClicked: root.saveCurrentBest()
+                    }
+                    Button{
+                        id: saveSettings
+                        text: "save settings"
+                        onClicked: saveSettingsWindow.show()
+                        Window{
+                            id: saveSettingsWindow
+                            property bool saveEveryNewBest: saveEveryNewBest.checked
+                            property url pathToSave: saveResultsPathDialog.fileUrl
+                            FileDialog{
+                                id: saveResultsPathDialog
+                                selectFolder: true
+                            }
+                            ColumnLayout{
+                                anchors.fill: parent
+                                Button{
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    id: saveResultPathBtn
+                                    onClicked: saveResultsPathDialog.open()
+                                    text: "выбор директории"
+                                }
+                                CheckBox{
+                                    id: saveEveryNewBest
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    text: "сохранять каждый найденный лучший"
+                                }
+                                Button{
+                                    id: okBtn
+                                    text: "apply"
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    onClicked: saveSettingsWindow.hide()
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

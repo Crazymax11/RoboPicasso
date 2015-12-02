@@ -2,6 +2,7 @@
 
 RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplication(argc, argv)
 {
+
     engine.addImageProvider("imageProvider", &imageProvider);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
@@ -10,7 +11,12 @@ RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplic
 
     QObject::connect(rootQML,SIGNAL(start()),
                      this,SLOT(start()));
-
+    saveAll = false;
+    pathToSave = "results\\";
+    if (!QDir(pathToSave).exists()){
+        QDir dir;
+        dir.mkdir(pathToSave);
+    }
     proc = new GeneticAlgorithmProcessor();
 
     //procThread.setPriority(QThread::LowPriority);
@@ -43,6 +49,15 @@ RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplic
 
     QObject::connect(rootQML,SIGNAL(shake(bool)),
                      proc,SLOT(shake(bool)));
+
+    QObject::connect(rootQML, SIGNAL(setSaveAll(bool)),
+                     this,SLOT(setSaveFlag(bool)));
+
+    QObject::connect(rootQML, SIGNAL(saveCurrentBest()),
+                     this, SLOT(saveBest()));
+
+    QObject::connect(rootQML,SIGNAL(setSavePath(QUrl)),
+                     this,SLOT(setSavePath(QUrl)));
 }
 void RobopicassoDesktopApp::savePopulationToJSON(QString filepath){
     QJsonArray result = proc->getPopulationInJSON();
@@ -110,10 +125,24 @@ void RobopicassoDesktopApp::drawBest(double val){
     QMetaObject::invokeMethod(rootQML, "updateImage",
             Q_RETURN_ARG(QVariant, returnedValue));
     rootQML->setProperty("bestResValue",val);
+    if (saveAll)
+        saveBest();
 }
 
+void RobopicassoDesktopApp::saveBest(){
+    imageProvider.image.save(pathToSave + "\\" + rootQML->property("generationIndex").toString() + QString("-") + rootQML->property("bestResValue").toString() + QString(".png"));
+}
+
+
 void RobopicassoDesktopApp::setMinimalOpacity(){
-    qDebug() << "changed";
     double minimalOpacity = rootQML->property("minimalOpacity").toDouble();
     proc->setMinimalOpacity(minimalOpacity);
+}
+
+void RobopicassoDesktopApp::setSaveFlag(bool saveAll){
+    this->saveAll=saveAll;
+}
+
+void RobopicassoDesktopApp::setSavePath(QUrl newpath){
+    pathToSave = newpath.toLocalFile();
 }

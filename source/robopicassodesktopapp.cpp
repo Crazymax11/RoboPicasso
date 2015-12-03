@@ -72,6 +72,12 @@ RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplic
                      proc,SLOT(setSmallShakeInterval(int)));
     QObject::connect(rootQML,SIGNAL(setBigShakeInterval(int)),
                      proc,SLOT(setBigShakeInterval(int)));
+    QObject::connect(rootQML,SIGNAL(setUntouchablesNum(int)),
+                     proc,SLOT(setUntouchablesNum(int)));
+    QObject::connect(rootQML,SIGNAL(setUntouchablesNum(int)),
+                     proc,SLOT(setUntouchablesNum(int)));
+    QObject::connect(rootQML,SIGNAL(setMitosNum(int)),
+                     proc,SLOT(setMitosNum(int)));
 }
 void RobopicassoDesktopApp::savePopulationToJSON(QString filepath){
     QJsonArray result = proc->getPopulationInJSON();

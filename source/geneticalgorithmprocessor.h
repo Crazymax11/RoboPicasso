@@ -39,7 +39,8 @@ public slots:
     void setBigShakeRange(int newrange){bigShakeRange=newrange;}
     void setSmallShakeInterval(int newInterval){smallShakeInterval=newInterval;}
     void setBigShakeInterval(int newInterval){bigShakeInterval=newInterval;}
-
+    void setUntouchablesNum(int newval){bestUntouchables = newval;}
+    void setMitosNum(int newval){mitosNum=newval;}
     //работает перед стартом работы
     void setFiguresNum(int figures){
         if ((!isRunning)&&(generationIndex==0))
@@ -118,7 +119,7 @@ private:
     int smallShakeInterval;
     int bigShakeRange;
     double smallShakeRange;
-
+    int mitosNum=0;
     int crossoverPopulationK;
     double selectionPopulationK;
 };

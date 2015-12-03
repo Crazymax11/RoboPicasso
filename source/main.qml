@@ -16,6 +16,9 @@ ApplicationWindow {
     property double mutationAmount: mutationAmountSlider.value/100
     property double mutationFigures: mutationFiguresSlider.value/100
     property int mutationParametrsNum: mutationParametrsSlider.value
+    property int untouchablesNum: untouchablesSlider.value
+
+    property int mitosNum: mitosSlider.value
     property double minimalOpacity: minimalOpacitySlider.value/100
     property int populationNum: Math.round(populationNumSlider.value)
     property int populationCrossoverKoef: populationCrossoverSlider.value
@@ -25,8 +28,9 @@ ApplicationWindow {
     property url tarImage: openFile.fileUrl
     property int generationIndex: 0
     property int bestValueIndex: 0
-    property bool saveAll: saveSettingsWindow.saveEveryNewBest
-    property url savePath: saveSettingsWindow.pathToSave
+    property bool saveAll: saveEveryNewBest.checked
+    property url savePath: saveResultsPathDialog.fileUrl
+
 
     onPopulationCrossoverKoefChanged: setPopulationCrossoverKoef(populationCrossoverKoef)
     signal setPopulationCrossoverKoef(int num)
@@ -57,6 +61,10 @@ ApplicationWindow {
     onMutationParametrsNumChanged: newMutationParametrsNum(mutationParametrsNum)
     signal newMinimalOpacity(double val)
     onMinimalOpacityChanged: newMinimalOpacity(minimalOpacity)
+    signal setUntouchablesNum(int val)
+    onUntouchablesNumChanged: setUntouchablesNum(untouchablesNum)
+    signal setMitosNum(int num)
+    onMitosNumChanged: setMitosNum(mitosNum)
 
     signal shake(bool isBig)
 
@@ -73,7 +81,7 @@ ApplicationWindow {
     onSmallShakeRangeChanged: setSmallShakeRange(smallShakeRange)
     onSmallShakeIntervalChanged: setSmallShakeInterval(smallShakeInterval)
     onBigShakeIntervalChanged: setBigShakeInterval(bigShakeInterval)
-    onBigShakeRangeChanged: setBigShakeRange(bisShakeRange)
+    onBigShakeRangeChanged: setBigShakeRange(bigShakeRange)
 
     property int bestResValue: 0
     onBestResValueChanged: bestValueIndex=generationIndex
@@ -161,32 +169,102 @@ ApplicationWindow {
                 onClicked: imRect.isImageShowing=!imRect.isImageShowing
             }
         }
-
-        Rectangle
-        {
+        Rectangle{
+            id: settingsRect
             height: parent.height - 2
             width: parent.width*0.3 - 10
-            color: "transparent"
             border.width: 2
             border.color: "black"
-            ColumnLayout{
-                anchors.fill: parent
-                anchors.margins: 3
-                Button{
-                    id: loadBtn
-                    text: "load image"
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    onClicked: openFile.open()
-                    FileDialog{
-                        id: openFile
-                        onAccepted: loadBtn.text = openFile.fileUrl
+            color: "silver"
+            state: "популяция"
+            radius: 10
+            states: [
+                State{
+                    name: "настройки"
+                    PropertyChanges {
+                        target: settingsTab
+                        visible: true
+                    }
+
+                },
+                State{
+                    name: "мутация"
+                    PropertyChanges {
+                        target: mutationTab
+                        visible: true
+                    }
+                },
+                State{
+                    name: "популяция"
+                    PropertyChanges {
+                        target: populationTab
+                        visible: true
                     }
                 }
+            ]
+            RowLayout{
+                id: tabs
+                anchors.top: parent.top
+                height: parent.height*0.15
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 5
+                spacing: 5
+                Rectangle{
+                    color: mutationTab.visible? "#C0392B" :"#E74C3C"
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    radius: 10
+                    Image{
+                        anchors.fill: parent
+                        source: "qrc:/images/mutation-icon.png"
+                    }
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: settingsRect.state = "мутация"
+                    }
+                }
+                Rectangle{
+                    color: populationTab.visible? "#27AE60" :"#2ECC71"
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    radius: 10
+                    Image{
+                        anchors.fill: parent
+                        source: "qrc:/images/population-icon.png"
+                    }
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: settingsRect.state = "популяция"
+                    }
+                }
+                Rectangle{
+                    color: settingsTab.visible? "#2980B9" :"#3498DB"
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    radius: 10
+                    Image{
+                        anchors.fill: parent
+                        source: "qrc:/images/settings-icon.png"
+                    }
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: settingsRect.state = "настройки"
+                    }
+                }
+            }
+            //3 columnLayouts
+            ColumnLayout{
+                id: mutationTab
+                anchors.top: tabs.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.margins: 5
+                visible: false
                 Text{
                     text: "шанс мутировать у особи: " + mutationChanceSlider.value +"%"
                 }
-
                 Slider{
                     id: mutationChanceSlider
                     Layout.fillHeight: true
@@ -229,6 +307,41 @@ ApplicationWindow {
                     value: 1
                     stepSize: 1
                 }
+                Text{
+                    text: "неприкосновенные для мутаций: " + untouchablesSlider.value
+                }
+                Slider{
+                    id: untouchablesSlider
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    maximumValue: 10
+                    minimumValue: 0
+                    value: 1
+                    stepSize: 1
+                }
+                Text{
+                    text: "митоз сильнейшего: " + mitosSlider.value
+                }
+                Slider{
+                    id: mitosSlider
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    maximumValue: 100
+                    minimumValue: 0
+                    value: 0
+                    stepSize: 1
+                }
+            }
+            //популяция
+            ColumnLayout{
+                id: populationTab
+
+                anchors.top: tabs.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.margins: 5
+                visible: false
                 Text{
                     text: "минимальная видимость: " + minimalOpacitySlider.value +"%"
                 }
@@ -299,22 +412,87 @@ ApplicationWindow {
                     value: 40
                     stepSize: 1
                 }
+            }
+            //настройки
+            ColumnLayout{
+                id: settingsTab
+                anchors.top: tabs.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.margins: 5
+                visible: false
+                Button{
+                    id: loadBtn
+                    text: "load image"
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    onClicked: openFile.open()
+                    FileDialog{
+                        id: openFile
+                        onAccepted: loadBtn.text = openFile.fileUrl
+                    }
+                }
                 CheckBox{
                     id: unchangedBestInsteadGenNumCheckBox
                     text: "Показывать количество поколений стагнации"
                 }
-
-                Row{
-                    Column{
-
-                    }
-                    Column{
-
-                    }
+                Text{
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "выжившие после встряски: " + (smallShakeRangeSlider.value*100)/100
                 }
-
-
-
+                Slider{
+                    id: smallShakeRangeSlider
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    minimumValue: 0
+                    maximumValue: 1
+                    value: 0.2
+                    stepSize: 0.05
+                }
+                Text{
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "интервал встряски: " + smallShakeIntervalSlider.value
+                }
+                Slider{
+                    id: smallShakeIntervalSlider
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    minimumValue: 0
+                    maximumValue: 500
+                    value: 5
+                    stepSize: 1
+                }
+                Text{
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "выжившие после катаклизма: " + bigShakeRangeSlider.value
+                }
+                Slider{
+                    id: bigShakeRangeSlider
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    minimumValue: 0
+                    maximumValue: populationNumSlider.value
+                    value: 1
+                    stepSize: 1
+                }
+                Text{
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "интервал катаклизма: " + bigShakeIntervalSlider.value
+                }
+                Slider{
+                    id: bigShakeIntervalSlider
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    minimumValue: 0
+                    maximumValue: 500
+                    value: 100
+                    stepSize: 1
+                }
                 RowLayout{
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -333,7 +511,23 @@ ApplicationWindow {
                         onClicked: root.shake(true)
                     }
                 }
-
+                Button{
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    id: saveResultPathBtn
+                    onClicked: saveResultsPathDialog.open()
+                    text: "директория для сохранения"
+                    FileDialog{
+                        id: saveResultsPathDialog
+                        selectFolder: true
+                    }
+                }
+                CheckBox{
+                    id: saveEveryNewBest
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "сохранять каждый найденный лучший"
+                }
                 Button{
                     id: startBtn
                     text: root.isStarted? root.isRunning? "pause": "resume" : "start"
@@ -341,126 +535,16 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     onClicked: root.isStarted? root.isRunning? root.pause(): root.resume() : root.start()
                 }
-                Row{
-                    Button{
-                        id: saveBtn
-                        text: "save"
-                        onClicked: root.saveCurrentBest()
-                    }
-                    Button{
-                        id: saveSettings
-                        text: "save settings"
-                        onClicked: saveSettingsWindow.show()
-                        Window{
-                            id: saveSettingsWindow
-                            property bool saveEveryNewBest: saveEveryNewBest.checked
-                            property url pathToSave: saveResultsPathDialog.fileUrl
-                            FileDialog{
-                                id: saveResultsPathDialog
-                                selectFolder: true
-                            }
-                            ColumnLayout{
-                                anchors.fill: parent
-                                Button{
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    id: saveResultPathBtn
-                                    onClicked: saveResultsPathDialog.open()
-                                    text: "выбор директории"
-                                }
-                                CheckBox{
-                                    id: saveEveryNewBest
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    text: "сохранять каждый найденный лучший"
-                                }
-                                Button{
-                                    id: okBtn
-                                    text: "apply"
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    onClicked: saveSettingsWindow.hide()
-                                }
-                            }
-                        }
-                    }
-                    Button{
-                        id: shakeSettingsButton
-                        text:"shake settings"
-                        onClicked: shakeSettingsWindow.show()
-                        Window{
-                            id: shakeSettingsWindow
-                            ColumnLayout{
-                                anchors.fill: parent
-                                Text{
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    text: "выжившие после встряски: " + (smallShakeRangeSlider.value*100)/100
-                                }
-                                Slider{
-                                    id: smallShakeRangeSlider
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    minimumValue: 0
-                                    maximumValue: 1
-                                    value: 0.2
-                                    stepSize: 0.05
-                                }
-                                Text{
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    text: "интервал встряски: " + smallShakeIntervalSlider.value
-                                }
-                                Slider{
-                                    id: smallShakeIntervalSlider
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    minimumValue: 0
-                                    maximumValue: 500
-                                    value: 5
-                                    stepSize: 1
-                                }
-                                Text{
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    text: "выжившие после катаклизма: " + bigShakeRangeSlider.value
-                                }
-                                Slider{
-                                    id: bigShakeRangeSlider
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    minimumValue: 0
-                                    maximumValue: populationNumSlider.value
-                                    value: 1
-                                    stepSize: 1
-                                }
-                                Text{
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    text: "интервал катаклизма: " + bigShakeIntervalSlider.value
-                                }
-                                Slider{
-                                    id: bigShakeIntervalSlider
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    minimumValue: 0
-                                    maximumValue: 500
-                                    value: 100
-                                    stepSize: 1
-                                }
-                                Button{
-                                    text: "apply"
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    onClicked: shakeSettingsWindow.hide()
-                                }
-                            }
-                        }
-                    }
+
+
+                Button{
+                    id: saveBtn
+                    text: "save"
+                    onClicked: root.saveCurrentBest()
                 }
             }
         }
-
-
     }
 }
+
+

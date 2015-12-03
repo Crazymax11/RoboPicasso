@@ -31,4 +31,5 @@ HEADERS += \
     bestresultimageprovider.h
 
 RESOURCES += \
-    qml.qrc
+    qml.qrc \
+    images.qrc

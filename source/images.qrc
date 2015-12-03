@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/mutation-icon.png</file>
+        <file>images/population-icon.png</file>
+        <file>images/settings-icon.png</file>
+    </qresource>
+</RCC>

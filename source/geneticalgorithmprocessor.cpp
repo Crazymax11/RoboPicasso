@@ -85,6 +85,10 @@ void GeneticAlgorithmProcessor::crossover()
     //скрещиваются рандомные 2 особи добирая популяцию до crossoverPopulationK
     for(int i=0;i<populationSize*crossoverPopulationK;i++)
         population.append(GenAlgObject(population[qrand()%populationSize],population[qrand()%populationSize]));
+
+
+
+
 //    for(int i=0;i<population.size()-1;i+=2)
 //        tempList.append(GenAlgObject(population[i], population[i+1]));
     //первые 3 особей самые крутые, мутируем их по 3 раз
@@ -109,9 +113,13 @@ void GeneticAlgorithmProcessor::mutation()
         }
     }
     //мутейтим лучших не удаляя их
-    for(int i=0;i<bestUntouchables;i++){
-        population.append(mutateObject(population[i]));
-    }
+//    for(int i=0;i<bestUntouchables;i++){
+//        population.append(mutateObject(population[i]));
+//    }
+    //митоз лучших
+    for(int i=0;i<bestUntouchables;i++)
+        for(int j=0;j<mitosNum;j++)
+            population.append(mutateObject(population[i]));
 
 
 }

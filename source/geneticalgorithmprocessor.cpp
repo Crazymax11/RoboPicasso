@@ -2,7 +2,6 @@
 #include <QDebug>
 #include <QColor>
 #include "math.h"
-#include <windows.h>
 #include "mypainter.h"
 GeneticAlgorithmProcessor::GeneticAlgorithmProcessor(): QObject()
 {
@@ -276,11 +275,17 @@ void GeneticAlgorithmProcessor::startIteration(){
 
     qDebug() << QString("started %1 generation").arg(QString::number(generationIndex));
     crossover();
+    qDebug() << QString("crossover");
     sortPopulation();
+    qDebug() << QString("sortPopulation");
     mutation();
+    qDebug() << QString("mutation");
     sortPopulation();
+    qDebug() << QString("sortPopulation");
     selection();
+    qDebug() << QString("selection");
     finishIteration();
+    qDebug() << QString("finishIteration");
 }
 
 void GeneticAlgorithmProcessor::finishIteration(){

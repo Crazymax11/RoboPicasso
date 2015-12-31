@@ -9,11 +9,11 @@ class GeneticAlgorithmProcessor: public QObject
 {
     Q_OBJECT
 signals:
-    newBestValue(double value);
-    newBestPopulationNumber(int num);
-    finished();
-    startNewIteration();
-    generationIndexIncreased(int index);
+    void newBestValue(double value);
+    void newBestPopulationNumber(int num);
+    void finished();
+    void startNewIteration();
+    void generationIndexIncreased(int index);
 public slots:
     void start();
     void pause();

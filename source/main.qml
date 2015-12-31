@@ -89,7 +89,7 @@ ApplicationWindow {
     signal start()
     signal resume()
     signal pause()
-    onStart: {isRunning = true; isStarted = true;isImageShowing = true;}
+    onStart: {isRunning = true; isStarted = true;imRect.isImageShowing = true;}
     onPause: {isRunning = false}
     onResume: (isRunning = true)
     function updateImage(){
@@ -263,6 +263,7 @@ ApplicationWindow {
                 anchors.margins: 5
                 visible: false
                 Text{
+                    fontSizeMode: Text.Fit
                     text: "шанс мутировать у особи: " + mutationChanceSlider.value +"%"
                 }
                 Slider{
@@ -274,6 +275,7 @@ ApplicationWindow {
                     stepSize: 0.25
                 }
                 Text{
+                    fontSizeMode: Text.Fit
                     text: "предел мутации параметра фигуры: " +mutationAmountSlider.value +"%"
                 }
                 Slider{
@@ -285,6 +287,7 @@ ApplicationWindow {
                     stepSize: 0.25
                 }
                 Text{
+                    fontSizeMode: Text.Fit
                     text: "мутирующие фигуры: " +mutationFiguresSlider.value +"%"
                 }
                 Slider{
@@ -296,6 +299,7 @@ ApplicationWindow {
                     stepSize: 0.25
                 }
                 Text{
+                    fontSizeMode: Text.Fit
                     text: "количество мутирующих параметров : " + mutationParametrsSlider.value
                 }
                 Slider{
@@ -308,6 +312,7 @@ ApplicationWindow {
                     stepSize: 1
                 }
                 Text{
+                    fontSizeMode: Text.Fit
                     text: "неприкосновенные для мутаций: " + untouchablesSlider.value
                 }
                 Slider{
@@ -320,6 +325,7 @@ ApplicationWindow {
                     stepSize: 1
                 }
                 Text{
+                    fontSizeMode: Text.Fit
                     text: "митоз сильнейшего: " + mitosSlider.value
                 }
                 Slider{
@@ -343,6 +349,7 @@ ApplicationWindow {
                 anchors.margins: 5
                 visible: false
                 Text{
+                    fontSizeMode: Text.Fit
                     text: "минимальная видимость: " + minimalOpacitySlider.value +"%"
                 }
                 Slider{
@@ -355,6 +362,7 @@ ApplicationWindow {
                 }
 
                 Text{
+                    fontSizeMode: Text.Fit
                     id: populationNum
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -370,6 +378,7 @@ ApplicationWindow {
                     stepSize: 1
                 }
                 Text{
+                    fontSizeMode: Text.Fit
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     text: "Предел расширения популяции: " + populationCrossoverSlider.value
@@ -384,6 +393,7 @@ ApplicationWindow {
                     stepSize: 0.25
                 }
                 Text{
+                    fontSizeMode: Text.Fit
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     text: "Остаток популяции после селекции: " + Math.round(populationSelectionSlider.value*100)/100
@@ -398,6 +408,7 @@ ApplicationWindow {
                     stepSize: 0.01
                 }
                 Text{
+                    fontSizeMode: Text.Fit
                     id: figuresNum
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -440,6 +451,7 @@ ApplicationWindow {
                 Text{
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    fontSizeMode: Text.Fit
                     text: "выжившие после встряски: " + (smallShakeRangeSlider.value*100)/100
                 }
                 Slider{
@@ -452,6 +464,7 @@ ApplicationWindow {
                     stepSize: 0.05
                 }
                 Text{
+                    fontSizeMode: Text.Fit
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     text: "интервал встряски: " + smallShakeIntervalSlider.value
@@ -466,6 +479,7 @@ ApplicationWindow {
                     stepSize: 1
                 }
                 Text{
+                    fontSizeMode: Text.Fit
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     text: "выжившие после катаклизма: " + bigShakeRangeSlider.value
@@ -480,6 +494,7 @@ ApplicationWindow {
                     stepSize: 1
                 }
                 Text{
+                    fontSizeMode: Text.Fit
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     text: "интервал катаклизма: " + bigShakeIntervalSlider.value
@@ -535,7 +550,6 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     onClicked: root.isStarted? root.isRunning? root.pause(): root.resume() : root.start()
                 }
-
 
                 Button{
                     id: saveBtn

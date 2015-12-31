@@ -25,10 +25,10 @@ public:
         FINISHED
     };
 signals:
-    newBestValue(double value);
-    newBestPopulationNumber(int num);
+    void newBestValue(double value);
+    void newBestPopulationNumber(int num);
 
-    finished();
+    void finished();
 public slots:
     void loadPopulationFromJSON(QString filepath);
     void savePopulationToJSON(QString filepath);

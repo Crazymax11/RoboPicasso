@@ -78,6 +78,9 @@ RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplic
                      proc,SLOT(setUntouchablesNum(int)));
     QObject::connect(rootQML,SIGNAL(setMitosNum(int)),
                      proc,SLOT(setMitosNum(int)));
+
+    QObject::connect(rootQML,SIGNAL(setSaveAsJson(bool)),
+                     this,SLOT(setSaveAsJsonFlag(bool)));
 }
 void RobopicassoDesktopApp::savePopulationToJSON(QString filepath){
     QJsonArray result = proc->getPopulationInJSON();
@@ -89,8 +92,9 @@ void RobopicassoDesktopApp::savePopulationToJSON(QString filepath){
 }
 
 void RobopicassoDesktopApp::saveCurrentBestAsImage(QString filepath){
-    QImage res = proc->bestImage->copy();
-    res.save(filepath);
+    imageProvider.image.save(filepath);
+//    QImage res = proc->bestImage->copy();
+//    res.save(filepath);
 }
 
 void RobopicassoDesktopApp::saveCurrentBestToJSON(QString filepath){
@@ -110,6 +114,11 @@ void RobopicassoDesktopApp::resume(){
 
 void RobopicassoDesktopApp::loadPopulationFromJSON(QString filepath){
 
+}
+
+
+void RobopicassoDesktopApp::setSaveAsJsonFlag(bool newval){
+    saveAsJson = newval;
 }
 
 void RobopicassoDesktopApp::start(){
@@ -150,7 +159,11 @@ void RobopicassoDesktopApp::drawBest(double val){
 }
 
 void RobopicassoDesktopApp::saveBest(){
-    imageProvider.image.save(pathToSave + "\\" + rootQML->property("generationIndex").toString() + QString("-") + rootQML->property("bestResValue").toString() + QString(".png"));
+    if (saveAsJson)
+        saveCurrentBestToJSON(pathToSave + "\\" + rootQML->property("generationIndex").toString() + QString("-") + rootQML->property("bestResValue").toString() + QString(".JSON"));
+    else
+        saveCurrentBestAsImage(pathToSave + "\\" + rootQML->property("generationIndex").toString() + QString("-") + rootQML->property("bestResValue").toString() + QString(".png"));
+    //imageProvider.image.save(pathToSave + "\\" + rootQML->property("generationIndex").toString() + QString("-") + rootQML->property("bestResValue").toString() + QString(".png"));
 }
 
 

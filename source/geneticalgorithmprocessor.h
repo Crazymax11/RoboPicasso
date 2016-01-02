@@ -62,6 +62,8 @@ public:
     QJsonArray getPopulationInJSON();
     QJsonObject getElementInJSON(int index);
     QList<GenAlgObject> population;
+
+    GenAlgObject _bestObject;
 private slots:
     double FitnessFunction(GenAlgObject& obj);
 

@@ -24,7 +24,6 @@ GenAlgObject::~GenAlgObject()
 {
 }
 GenAlgObject::GenAlgObject(const GenAlgObject& b){
-    res = -qInf();
     this->width = b.width;
     this->height = b.height;
     this->figureList = b.figureList;
@@ -61,7 +60,7 @@ bool GenAlgObject::operator<(GenAlgObject& obj2)
 QJsonObject GenAlgObject::serializeToJson() const{
     QJsonObject result;
     QJsonArray figuresJSON;
-    for(int i=0;this->figureList.size();i++)
+    for(int i=0;i<this->figureList.size();i++)
         figuresJSON.append(figureList[i].serializeToJson());
     result["figures"] = figuresJSON;
     return result;

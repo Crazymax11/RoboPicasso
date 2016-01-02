@@ -48,8 +48,10 @@ private slots:
 
     void setMinimalOpacity();
 
+    void setSaveAsJsonFlag(bool newval);
 private:
     bool saveAll;
+    bool saveAsJson = false;
     QString pathToSave;
     QQmlApplicationEngine engine;
     QObject* rootQML;

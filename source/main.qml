@@ -29,7 +29,11 @@ ApplicationWindow {
     property int generationIndex: 0
     property int bestValueIndex: 0
     property bool saveAll: saveEveryNewBest.checked
-    property url savePath: saveResultsPathDialog.fileUrl
+    property url savePath: saveResultsPathDialog
+    property bool saveAsJsonBool: false
+
+    onSaveAsJsonBoolChanged: setSaveAsJson(saveAsJsonBool)
+    signal setSaveAsJson(bool newval)
 
 
     onPopulationCrossoverKoefChanged: setPopulationCrossoverKoef(populationCrossoverKoef)
@@ -542,6 +546,13 @@ ApplicationWindow {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     text: "сохранять каждый найденный лучший"
+                }
+                CheckBox{
+                    id: saveAsJSON
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "сохранять в JSON"
+                    onCheckedChanged: root.saveAsJsonBool = checked
                 }
                 Button{
                     id: startBtn

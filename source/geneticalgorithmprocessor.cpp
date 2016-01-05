@@ -344,3 +344,27 @@ void GeneticAlgorithmProcessor::shake(bool isBig){
     }
     nextSmallShakeIndex=generationIndex+smallShakeInterval;
 }
+
+
+int GeneticAlgorithmProcessor::findWeakestFigure(const GenAlgObject& b){
+    GenAlgObject temp(b);
+    int weakestIndex = -1;
+    double weakestDiff = -qInf();
+    for(int i=0;i<temp.figureList.size();i++){
+        double fitnessValueBefore = FitnessFunction(temp);
+        double oldRadius = temp.figureList[i].radius;
+        temp.figureList[i].radius = 0;
+        double fitnessValueAfter = FitnessFunction(temp);
+        double diff = fitnessValueAfter - fitnessValueBefore;
+        if (diff > weakestDiff){
+            weakestDiff= diff;
+            weakestIndex = i;
+        }
+        temp.figureList[i].radius = oldRadius;
+    }
+    return weakestIndex;
+}
+
+Figure& GeneticAlgorithmProcessor::getWeakesFigure(const GenAlgObject& b){
+    return b.figureList[findWeakestFigure(b)];
+}

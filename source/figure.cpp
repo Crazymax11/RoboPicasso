@@ -64,11 +64,11 @@ Figure::Figure(QJsonObject jsonobj){
 
 void Figure::loadFromJSON(QJsonObject jsonobj){
     type = static_cast<FigureTypes>(FigureTypesNames.indexOf(jsonobj["type"].toString()));
-    radius = jsonobj["radius"].toDouble();
-    x = jsonobj["x"].toDouble();
-    y = jsonobj["y"].toDouble();
-    angle = jsonobj["angle"].toDouble();
-    opacity = jsonobj["opacity"].toDouble();
+    radius = jsonobj["radius"].toString().toDouble();
+    x = jsonobj["x"].toString().toDouble();
+    y = jsonobj["y"].toString().toDouble();
+    angle = jsonobj["angle"].toString().toDouble();
+    opacity = jsonobj["opacity"].toString().toDouble();
     QJsonObject colorJSON = jsonobj["color"].toObject();
-    color = qRgb(colorJSON["red"].toInt(), colorJSON["blue"].toInt(), colorJSON["green"].toInt());
+    color = qRgb(colorJSON["red"].toString().toInt(), colorJSON["blue"].toString().toInt(), colorJSON["green"].toString().toInt());
 }

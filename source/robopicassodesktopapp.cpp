@@ -81,6 +81,9 @@ RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplic
 
     QObject::connect(rootQML,SIGNAL(setSaveAsJson(bool)),
                      this,SLOT(setSaveAsJsonFlag(bool)));
+
+    QObject::connect(rootQML,SIGNAL(visualize()),
+                     this,SLOT(visualize()));
 }
 void RobopicassoDesktopApp::savePopulationToJSON(QString filepath){
     QJsonArray result = proc->getPopulationInJSON();
@@ -178,4 +181,62 @@ void RobopicassoDesktopApp::setSaveFlag(bool saveAll){
 
 void RobopicassoDesktopApp::setSavePath(QUrl newpath){
     pathToSave = newpath.toLocalFile();
+}
+
+
+void RobopicassoDesktopApp::visualize(){
+    QDir saveDir(pathToSave);
+    QStringList nameFilters;
+    nameFilters << QString("*.json");
+    QStringList filelist = saveDir.entryList(nameFilters);
+    //QMap сам сортирует по ключу вроде как
+    QMap<int,GenAlgObject> map;
+    foreach(QString file, filelist){
+        int popNum = file.split("-")[0].toInt();
+        QFile jsonFile(pathToSave+"\\" + file);
+        bool result = jsonFile.open(QIODevice::ReadOnly);
+        QByteArray data = jsonFile.readAll();
+        QJsonDocument doc = QJsonDocument::fromJson(data);
+        map[popNum] = GenAlgObject(doc.object());
+    }
+    QMap<int,GenAlgObject>::iterator src = map.begin();
+    QMap<int,GenAlgObject>::iterator dst = map.begin();
+    dst++;
+
+    QList<QImage> frames;
+    int transitionsFrames = 48;
+    while(dst != map.end()){
+        const GenAlgObject srcObject = src.value();
+        const GenAlgObject dstObject = dst.value();
+        for(int i=0;i<transitionsFrames;i++){
+            GenAlgObject transObject(srcObject);
+            for(int j=0;j<transObject.figureList.size();j++){
+                double koef = double(i)/transitionsFrames;
+                transObject.figureList[j].x += (dstObject.figureList[j].x - transObject.figureList[j].x)*koef;
+                transObject.figureList[j].y += (dstObject.figureList[j].y - transObject.figureList[j].y)*koef;
+                transObject.figureList[j].angle += (dstObject.figureList[j].angle - transObject.figureList[j].angle)*koef;
+                transObject.figureList[j].opacity += (dstObject.figureList[j].opacity - transObject.figureList[j].opacity)*koef;
+                transObject.figureList[j].radius += (dstObject.figureList[j].radius - transObject.figureList[j].radius)*koef;
+
+                //после половины - тип dst
+                transObject.figureList[j].type = (koef>= 0.5)? dstObject.figureList[j].type: transObject.figureList[j].type;
+
+                int newRed = qRed(transObject.figureList[j].color) + (qRed(dstObject.figureList[j].color) - qRed(transObject.figureList[j].color))*koef;
+                int newGreen = qGreen(transObject.figureList[j].color) + (qGreen(dstObject.figureList[j].color) - qGreen(transObject.figureList[j].color))*koef;
+                int newBlue = qBlue(transObject.figureList[j].color) + (qBlue(dstObject.figureList[j].color) - qBlue(transObject.figureList[j].color))*koef;
+                transObject.figureList[j].color = qRgb(newRed, newGreen, newBlue);
+                //transObject.figureList[j].type += (transObject.figureList[j].x - dstObject.figureList[i].x)*(double(i)/transitionsFrames);
+                //transObject.figureList[j].color += (transObject.figureList[j].x - dstObject.figureList[i].x)*(double(i)/transitionsFrames);
+            }
+            //заменить
+            QImage transResImage(QSize(490, 274), QImage::Format_ARGB32);
+            transObject.drawResult(&transResImage);
+            frames << transResImage;
+        }
+        src++;
+        dst++;
+    }
+    for(int i=0;i<frames.size();i++){
+        frames[i].save("vis\\" + QString::number(i) + QString(".png"));
+    }
 }

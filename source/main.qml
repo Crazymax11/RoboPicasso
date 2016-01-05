@@ -36,6 +36,7 @@ ApplicationWindow {
     signal setSaveAsJson(bool newval)
 
 
+
     onPopulationCrossoverKoefChanged: setPopulationCrossoverKoef(populationCrossoverKoef)
     signal setPopulationCrossoverKoef(int num)
 
@@ -100,6 +101,9 @@ ApplicationWindow {
         bestResultSource = "";
         bestResultSource = "image://imageProvider/image.png";
     }
+
+
+    signal visualize()
 
     id:root
     title: qsTr("Подборка фигур генетических алгоритмом")
@@ -566,6 +570,11 @@ ApplicationWindow {
                     id: saveBtn
                     text: "save"
                     onClicked: root.saveCurrentBest()
+                }
+                Button{
+                    id: visualizeBtn
+                    text: "визуализировать"
+                    onClicked: root.visualize();
                 }
             }
         }

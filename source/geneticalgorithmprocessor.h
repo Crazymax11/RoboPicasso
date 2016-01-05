@@ -85,6 +85,9 @@ private slots:
     double mutateValue(double val, double minVal = 0);
 
     void increaseGenerationIndex();
+
+    int findWeakestFigure(const GenAlgObject& b);
+    Figure& getWeakesFigure(const GenAlgObject& b);
 private:
     int generationIndex;
 

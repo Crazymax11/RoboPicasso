@@ -13,6 +13,7 @@
 #include "bestresultimageprovider.h"
 #include <QDir>
 #include <QFile>
+#include <iterator>
 class RobopicassoDesktopApp : public QApplication
 {
     Q_OBJECT
@@ -49,6 +50,7 @@ private slots:
     void setMinimalOpacity();
 
     void setSaveAsJsonFlag(bool newval);
+    void visualize();
 private:
     bool saveAll;
     bool saveAsJson = false;

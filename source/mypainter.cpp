@@ -20,14 +20,16 @@ void MyPainter::drawFigure(QImage* image, Figure &fig)
     int y = fig.y * image->height();
     int radius = fig.radius*(sqrt(image->width()*image->width() + image->height()*image->height()));
     QPainterPath path;
+    double diagRadius = radius*sqrt(2);
     switch (fig.type)
     {
     case SQUARE:
-        path.moveTo(x + rotateCoordinate(-radius, -radius, angle), y + rotateCoordinate(-radius, -radius, angle, false));
-        path.lineTo(x + rotateCoordinate(radius, -radius, angle), y + rotateCoordinate(radius, -radius, angle, false));
-        path.lineTo(x + rotateCoordinate(radius, radius, angle), y + rotateCoordinate(radius, radius, angle, false));
-        path.lineTo(x + rotateCoordinate(-radius, radius, angle), y + rotateCoordinate(-radius, radius, angle, false));
-        path.lineTo(x + rotateCoordinate(-radius, -radius, angle), y + rotateCoordinate(-radius, -radius, angle, false));
+        //квадрат вписанный в окружнсоть данного радиуса
+        path.moveTo(x + rotateCoordinate(-diagRadius, -diagRadius, angle), y + rotateCoordinate(-diagRadius, -diagRadius, angle, false));
+        path.lineTo(x + rotateCoordinate(diagRadius, -diagRadius, angle), y + rotateCoordinate(diagRadius, -diagRadius, angle, false));
+        path.lineTo(x + rotateCoordinate(diagRadius, diagRadius, angle), y + rotateCoordinate(diagRadius, diagRadius, angle, false));
+        path.lineTo(x + rotateCoordinate(-diagRadius, diagRadius, angle), y + rotateCoordinate(-diagRadius, diagRadius, angle, false));
+        path.lineTo(x + rotateCoordinate(-diagRadius, -diagRadius, angle), y + rotateCoordinate(-diagRadius, -diagRadius, angle, false));
         painter.fillPath(path, QBrush(fig.color));
         break;
     case CIRCLE:
@@ -36,10 +38,16 @@ void MyPainter::drawFigure(QImage* image, Figure &fig)
         painter.fillPath(path, QBrush(fig.color));
         break;
     case TRIANGLE:
-        path.moveTo(x + rotateCoordinate(0, -radius, angle), y + rotateCoordinate(0, -radius, angle, false));
-        path.lineTo(x + rotateCoordinate(radius, 0, angle), y + rotateCoordinate(radius, 0, angle, false));
-        path.lineTo(x + rotateCoordinate(-radius, 0, angle), y + rotateCoordinate(-radius, 0, angle, false));
-        path.lineTo(x + rotateCoordinate(0, -radius, angle), y + rotateCoordinate(0, -radius, angle, false));
+        // равносторонний треугольник вписанный в окружность данного радиуса
+        /*
+           *
+          * *
+         * * *
+        */
+        path.moveTo(x + rotateCoordinate(0, radius, angle), y + rotateCoordinate(0, radius, angle, false));
+        path.lineTo(x + rotateCoordinate(sqrt(3)/2*radius, -radius/2, angle), y + rotateCoordinate(sqrt(3)/2*radius, -radius/2, angle, false));
+        path.lineTo(x + rotateCoordinate(-sqrt(3)/2*radius, -radius/2, angle), y + rotateCoordinate(-sqrt(3)/2*radius, -radius/2, angle, false));
+        path.lineTo(x + rotateCoordinate(0, radius, angle), y + rotateCoordinate(0, radius, angle, false));
         painter.fillPath(path, QBrush(fig.color));
         break;
     }

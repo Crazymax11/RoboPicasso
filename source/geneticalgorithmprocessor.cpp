@@ -117,10 +117,15 @@ void GeneticAlgorithmProcessor::mutation()
 //    }
     //митоз лучших
     for(int i=0;i<bestUntouchables;i++)
-        for(int j=0;j<mitosNum;j++)
-            population.append(mutateObject(population[i]));
-
-
+        for(int j=0;j<mitosNum;j++){
+            //временный код
+            // в митозе мутируем ТОЛЬКО слабейшую фигуру
+            int weakestFigureIndex = findWeakestFigure(population[i]);
+            GenAlgObject mitozed(population[i]);
+            mitozed.figureList[weakestFigureIndex] = mutateFigure(population[i].figureList[weakestFigureIndex]);
+            population.append(mitozed);
+            //population[i].figureList[weakestFigureIndex] = mutateFigure(population[i].figureList[weakestFigureIndex]);
+        }
 }
 double GeneticAlgorithmProcessor::FitnessFunction(GenAlgObject& obj1)
 {
@@ -276,8 +281,9 @@ void GeneticAlgorithmProcessor::startIteration(){
     qDebug() << QString("started %1 generation").arg(QString::number(generationIndex));
     crossover();
     qDebug() << QString("crossover");
-    sortPopulation();
-    qDebug() << QString("sortPopulation");
+    //закоменчено, сортировка это хорошо, но тем не менее пусть будет потом
+//    sortPopulation();
+//    qDebug() << QString("sortPopulation");
     mutation();
     qDebug() << QString("mutation");
     sortPopulation();

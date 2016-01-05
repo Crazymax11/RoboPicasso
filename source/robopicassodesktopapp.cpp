@@ -194,7 +194,7 @@ void RobopicassoDesktopApp::visualize(){
     foreach(QString file, filelist){
         int popNum = file.split("-")[0].toInt();
         QFile jsonFile(pathToSave+"\\" + file);
-        bool result = jsonFile.open(QIODevice::ReadOnly);
+        jsonFile.open(QIODevice::ReadOnly);
         QByteArray data = jsonFile.readAll();
         QJsonDocument doc = QJsonDocument::fromJson(data);
         map[popNum] = GenAlgObject(doc.object());
@@ -203,7 +203,7 @@ void RobopicassoDesktopApp::visualize(){
     QMap<int,GenAlgObject>::iterator dst = map.begin();
     dst++;
 
-    QList<QImage> frames;
+    QList<QImage*> frames;
     int transitionsFrames = 48;
     while(dst != map.end()){
         const GenAlgObject srcObject = src.value();
@@ -229,14 +229,15 @@ void RobopicassoDesktopApp::visualize(){
                 //transObject.figureList[j].color += (transObject.figureList[j].x - dstObject.figureList[i].x)*(double(i)/transitionsFrames);
             }
             //заменить
-            QImage transResImage(QSize(490, 274), QImage::Format_ARGB32);
-            transObject.drawResult(&transResImage);
+            QImage* transResImage = new QImage(QSize(490, 274), QImage::Format_ARGB32);
+            transObject.drawResult(transResImage);
             frames << transResImage;
         }
         src++;
         dst++;
     }
     for(int i=0;i<frames.size();i++){
-        frames[i].save("vis\\" + QString::number(i) + QString(".png"));
+        frames[i]->save("vis\\" + QString::number(i) + QString(".png"));
+        delete frames[i];
     }
 }

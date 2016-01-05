@@ -365,6 +365,6 @@ int GeneticAlgorithmProcessor::findWeakestFigure(const GenAlgObject& b){
     return weakestIndex;
 }
 
-Figure& GeneticAlgorithmProcessor::getWeakesFigure(const GenAlgObject& b){
+Figure& GeneticAlgorithmProcessor::getWeakesFigure(GenAlgObject& b){
     return b.figureList[findWeakestFigure(b)];
 }

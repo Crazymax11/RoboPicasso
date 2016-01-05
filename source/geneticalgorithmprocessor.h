@@ -87,7 +87,7 @@ private slots:
     void increaseGenerationIndex();
 
     int findWeakestFigure(const GenAlgObject& b);
-    Figure& getWeakesFigure(const GenAlgObject& b);
+    Figure& getWeakesFigure(GenAlgObject& b);
 private:
     int generationIndex;
 

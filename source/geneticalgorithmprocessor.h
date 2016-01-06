@@ -5,6 +5,18 @@
 #include "genalgobject.h"
 #include <QObject>
 
+
+//model: ["рулетка", "турнир", "каждый с каждым", "каждый с соседом", "каждый с обратным"]
+enum crossoverType {
+    ROULETTE,
+    TOURNAMENT,
+    EACH_WITH_EACH,
+    EACH_WITH_NEIGHBORS,
+    EACH_WITH_REVERSE
+
+};
+
+
 class GeneticAlgorithmProcessor: public QObject
 {
     Q_OBJECT
@@ -47,6 +59,10 @@ public slots:
             this->figures=figures;
     }
 
+    void setCrossoverType(crossoverType newtype){
+        m_crossoverType = newtype;
+    }
+
     int getCurrentIndex(){return generationIndex;}
 public:
     GeneticAlgorithmProcessor();
@@ -56,7 +72,7 @@ public:
     QImage* bestImage;
     int width;
     int height;
-    int maxSize;
+    double maxSize;
     QString targetPath;
 
     QJsonArray getPopulationInJSON();
@@ -127,6 +143,8 @@ private:
     int mitosNum=0;
     int crossoverPopulationK;
     double selectionPopulationK;
+
+    crossoverType m_crossoverType;
 };
 
 #endif // GENETICALGORITHMPROCESSOR_H

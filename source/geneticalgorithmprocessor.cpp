@@ -29,6 +29,8 @@ GeneticAlgorithmProcessor::GeneticAlgorithmProcessor(): QObject()
     smallShakeRange = 0.2;
     smallShakeInterval = 5;
     bigShakeInterval = 100;
+
+    m_crossoverType = crossoverType::ROULETTE;
     QObject::connect(this,SIGNAL(startNewIteration()),
                      this,SLOT(startIteration()),Qt::QueuedConnection);
 }
@@ -40,7 +42,9 @@ void GeneticAlgorithmProcessor::start()
     width = targetImage.width();
     height = targetImage.height();
     maxSize = width>height? height: width;
-    maxSize /=4;
+    //задолбали огромные фигуры :С перекрывают все
+    //нужно сделать настройку
+    maxSize = double(1)/8;
 
     tempIm = new QImage(width,height,QImage::Format_ARGB32);
 
@@ -63,7 +67,7 @@ GenAlgObject GeneticAlgorithmProcessor::generateRandomObject()
     for(int i =0;i<figures; i++)
     {
         Figure figure;
-        figure = figure.createRandomFigure(this->minOpacity);
+        figure = figure.createRandomFigure(this->minOpacity, this->maxSize);
         result.figureList.append(figure);
     }
     return result;
@@ -80,10 +84,44 @@ void GeneticAlgorithmProcessor::selection()
 
 void GeneticAlgorithmProcessor::crossover()
 {
-    QList<GenAlgObject> tempList;
+    //QList<GenAlgObject> tempList;
     //скрещиваются рандомные 2 особи добирая популяцию до crossoverPopulationK
-    for(int i=0;i<populationSize*crossoverPopulationK;i++)
-        population.append(GenAlgObject(population[qrand()%populationSize],population[qrand()%populationSize]));
+
+    //расширяем не менее указанного предела
+    int populationSizeAtStart = population.size();
+
+    while(population.size()<populationSizeAtStart*crossoverPopulationK){
+        switch (m_crossoverType){
+        case crossoverType::ROULETTE:
+            for(int i=0;i<populationSize*crossoverPopulationK;i++)
+                population.append(GenAlgObject(population[qrand()%populationSize],population[qrand()%populationSize]));
+            break;
+        case crossoverType::TOURNAMENT:
+            // перед тем как сделать нужно переделать 1. метод оценки, чем лучше тем больше фитнес
+            // 2. переоценка объекта только если изменилась фигура объекта
+            // 3. при изменении фигуры пересчитывать только те пиксели, которые затронуты измененными фигурами
+            break;
+        case crossoverType::EACH_WITH_EACH:
+            for(int i=0;i<populationSizeAtStart;i++){
+                for(int j=i+1;j<populationSizeAtStart;j++){
+                    population.append(GenAlgObject(population[i],population[j]));
+                }
+            }
+            break;
+        case crossoverType::EACH_WITH_NEIGHBORS:
+            for(int i=0;i<populationSizeAtStart;i++){
+                population.append(GenAlgObject(population[i],population[(i-1+populationSizeAtStart)%populationSizeAtStart]));
+                population.append(GenAlgObject(population[i],population[(i-1+populationSizeAtStart)%populationSizeAtStart]));
+            }
+            break;
+        case crossoverType::EACH_WITH_REVERSE:
+            for(int i=0;i<populationSizeAtStart;i++){
+                population.append(GenAlgObject(population[i], population[populationSizeAtStart-1-i]));
+            }
+            break;
+        }
+    }
+
 
 
 
@@ -214,8 +252,8 @@ Figure GeneticAlgorithmProcessor::mutateFigure(const Figure &b){
             result.y = mutateValue(result.y);
             break;
         case 2:
-            //максимум должен быть 0.25
-            result.radius = mutateValue(result.radius*4)/4;
+            //приведем обратно
+            result.radius = mutateValue(result.radius*12)/12;
             break;
         case 3:
             int newred;

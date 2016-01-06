@@ -84,6 +84,9 @@ RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplic
 
     QObject::connect(rootQML,SIGNAL(visualize()),
                      this,SLOT(visualize()));
+
+    QObject::connect(rootQML,SIGNAL(crossoverTypeChanged(QString)),
+                     this,SLOT(crossoverTypeChanged(QString)));
 }
 void RobopicassoDesktopApp::savePopulationToJSON(QString filepath){
     QJsonArray result = proc->getPopulationInJSON();
@@ -240,4 +243,15 @@ void RobopicassoDesktopApp::visualize(){
         frames[i]->save("vis\\" + QString::number(i) + QString(".png"));
         delete frames[i];
     }
+}
+
+
+void RobopicassoDesktopApp::crossoverTypeChanged(QString newtype){
+    QMap<QString,crossoverType> typeMap;
+    typeMap["рулетка"] = crossoverType::ROULETTE;
+    typeMap["турнир"] = crossoverType::TOURNAMENT;
+    typeMap["каждый с каждым"] = crossoverType::EACH_WITH_EACH;
+    typeMap["каждый с соседом"] = crossoverType::EACH_WITH_NEIGHBORS;
+    typeMap["каждый с обратным"] = crossoverType::EACH_WITH_REVERSE;
+    proc->setCrossoverType(typeMap[newtype]);
 }

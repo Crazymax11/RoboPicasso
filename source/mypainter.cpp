@@ -39,11 +39,11 @@ void MyPainter::drawFigure(QImage* image, Figure &fig)
         break;
     case TRIANGLE:
         // равносторонний треугольник вписанный в окружность данного радиуса
-        /*
-           *
-          * *
-         * * *
-        */
+//
+//           *
+//          * *
+//         * * *
+//
         path.moveTo(x + rotateCoordinate(0, radius, angle), y + rotateCoordinate(0, radius, angle, false));
         path.lineTo(x + rotateCoordinate(sqrt(3)/2*radius, -radius/2, angle), y + rotateCoordinate(sqrt(3)/2*radius, -radius/2, angle, false));
         path.lineTo(x + rotateCoordinate(-sqrt(3)/2*radius, -radius/2, angle), y + rotateCoordinate(-sqrt(3)/2*radius, -radius/2, angle, false));

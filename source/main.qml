@@ -54,6 +54,7 @@ ApplicationWindow {
     signal setGenerationIndex(int num)
     onSetGenerationIndex: generationIndex=num
 
+    signal crossoverTypeChanged(string newtype)
 
     //не знаю как соединит нативный qml сигнал
     signal newMutationChance(double val)
@@ -385,6 +386,30 @@ ApplicationWindow {
                     value: 40
                     stepSize: 1
                 }
+
+                RowLayout{
+                    Layout.fillWidth: true
+                    height: 18
+                    Text{
+                        fontSizeMode: Text.Fit
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        text: "Тип кроссовера"
+                        verticalAlignment: Text.AlignVCenter
+                        //horizontalAlignment: Text.AlignHCenter
+                    }
+                    ComboBox{
+                        id: crossoverType
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        model: ["рулетка", "турнир", "каждый с каждым", "каждый с соседом", "каждый с обратным"]
+                        currentIndex: 0
+                        onCurrentIndexChanged: root.crossoverTypeChanged(currentText)
+                    }
+                }
+
+
+
                 Text{
                     fontSizeMode: Text.Fit
                     Layout.fillHeight: true

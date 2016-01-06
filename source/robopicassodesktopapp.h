@@ -51,6 +51,8 @@ private slots:
 
     void setSaveAsJsonFlag(bool newval);
     void visualize();
+
+    void crossoverTypeChanged(QString newtype);
 private:
     bool saveAll;
     bool saveAsJson = false;

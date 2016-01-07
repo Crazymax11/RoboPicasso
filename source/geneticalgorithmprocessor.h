@@ -44,7 +44,7 @@ public slots:
     void setBestUntouchables(double newBestUntouchables){bestUntouchables=newBestUntouchables;}
     void setMinimalOpacity(double newMinOpacity){minOpacity=newMinOpacity;}
     void setGenerationsLimit(int newLimit){generationsLimit=newLimit;}
-    void setMutationFigures(double newMutFigures){mutationFiguresNum=newMutFigures;}
+    void setMutationFigures(int newMutFigures){mutationFiguresNum=newMutFigures;}
     void setPopulationCrossoverKoef(int newk){crossoverPopulationK=newk;}
     void setPopulationSelectionKoef(double newk){selectionPopulationK=newk;}
     void setSmallShakeRange(double newrange){smallShakeRange=newrange;}
@@ -91,6 +91,8 @@ private slots:
     void crossover();
     void mutation();
 
+    void mitosis();
+
     //встряска, оставляет топ range, остальных заменяет на рандом
     void shakePopulation(double range);
     void shakePopulation(int range);
@@ -116,7 +118,7 @@ private:
     int populationSize;
     double mutationChance;
     double mutationAmount; //от 0 до 1
-    double mutationFiguresNum; // от 0 до 1
+    int mutationFiguresNum; //точное количество фигур
     int numOfParametrsToMutate; //0-5
     // лучших не трогаем в процессе мутации
     int bestUntouchables;

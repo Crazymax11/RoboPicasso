@@ -35,8 +35,8 @@ RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplic
                      proc,SLOT(setMutationChance(double)));
     QObject::connect(rootQML,SIGNAL(newMutationAmount(double)),
                      proc,SLOT(setMutationAmount(double)));
-    QObject::connect(rootQML,SIGNAL(newMutationFigures(double)),
-                     proc,SLOT(setMutationFigures(double)));
+    QObject::connect(rootQML,SIGNAL(newMutationFigures(int)),
+                     proc,SLOT(setMutationFigures(int)));
 
     QObject::connect(rootQML,SIGNAL(newMutationParametrsNum(int)),
                      proc,SLOT(setNumOfMutationParametrs(int)));

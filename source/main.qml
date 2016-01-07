@@ -14,7 +14,7 @@ ApplicationWindow {
     property bool isStarted: false
     property double mutationChance: mutationChanceSlider.value/100
     property double mutationAmount: mutationAmountSlider.value/100
-    property double mutationFigures: mutationFiguresSlider.value/100
+    property int mutationFigures: mutationFiguresSlider.value
     property int mutationParametrsNum: mutationParametrsSlider.value
     property int untouchablesNum: untouchablesSlider.value
 
@@ -61,7 +61,7 @@ ApplicationWindow {
     onMutationChanceChanged: newMutationChance(mutationChance)
     signal newMutationAmount(double val)
     onMutationAmountChanged: newMutationAmount(mutationAmount)
-    signal newMutationFigures(double val)
+    signal newMutationFigures(int val)
     onMutationFiguresChanged: newMutationFigures(mutationFigures)
     signal newMutationParametrsNum(int val)
     onMutationParametrsNumChanged: newMutationParametrsNum(mutationParametrsNum)
@@ -297,15 +297,15 @@ ApplicationWindow {
                 }
                 Text{
                     fontSizeMode: Text.Fit
-                    text: "мутирующие фигуры: " +mutationFiguresSlider.value +"%"
+                    text: "мутирующие фигуры: " +mutationFiguresSlider.value
                 }
                 Slider{
                     id: mutationFiguresSlider
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    value: 5
-                    maximumValue: 100
-                    stepSize: 0.25
+                    value: 2
+                    maximumValue: figuresNumSlider.value
+                    stepSize: 1
                 }
                 Text{
                     fontSizeMode: Text.Fit
@@ -341,7 +341,7 @@ ApplicationWindow {
                     id: mitosSlider
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    maximumValue: 100
+                    maximumValue: 10
                     minimumValue: 0
                     value: 0
                     stepSize: 1

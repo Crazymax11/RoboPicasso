@@ -143,28 +143,30 @@ void GeneticAlgorithmProcessor::mutation()
 {
     //первые n пожалуй не будем мутировать
     for(int i = bestUntouchables;i<population.size(); i++){
-        for(int j =0; j<population[i].figureList.size();j++){
-            double randVal = double(qrand()%100)/100;
-            if (randVal < mutationChance)
-                population[i] = mutateObject(population[i]);
-        }
+        double randVal = double(qrand()%100)/100;
+        if (randVal < mutationChance)
+            population[i] = mutateObject(population[i]);
     }
     //мутейтим лучших не удаляя их
 //    for(int i=0;i<bestUntouchables;i++){
 //        population.append(mutateObject(population[i]));
 //    }
-    //митоз лучших
-    for(int i=0;i<bestUntouchables;i++)
-        for(int j=0;j<mitosNum;j++){
-            //временный код
-            // в митозе мутируем ТОЛЬКО слабейшую фигуру
-            int weakestFigureIndex = findWeakestFigure(population[i]);
-            GenAlgObject mitozed(population[i]);
-            mitozed.figureList[weakestFigureIndex] = mutateFigure(population[i].figureList[weakestFigureIndex]);
-            population.append(mitozed);
-            //population[i].figureList[weakestFigureIndex] = mutateFigure(population[i].figureList[weakestFigureIndex]);
-        }
+
 }
+
+void GeneticAlgorithmProcessor::mitosis(){
+    //делаем по 1 копии
+    for(int i=0;i<mitosNum;i++){
+        //временный код
+        // в митозе мутируем ТОЛЬКО слабейшую фигуру
+        int weakestFigureIndex = findWeakestFigure(population[i]);
+        GenAlgObject mitozed(population[i]);
+        mitozed.figureList[weakestFigureIndex] = mutateFigure(population[i].figureList[weakestFigureIndex]);
+        population.append(mitozed);
+        //population[i].figureList[weakestFigureIndex] = mutateFigure(population[i].figureList[weakestFigureIndex]);
+    }
+}
+
 double GeneticAlgorithmProcessor::FitnessFunction(GenAlgObject& obj1)
 {
     double result = 0;
@@ -279,11 +281,15 @@ GenAlgObject GeneticAlgorithmProcessor::mutateObject(const GenAlgObject &b){
 //    //а что если мутейтить одну фигуру?
 //    int randIndex = qrand()%figures;
 //    result.figureList[randIndex] = mutateFigure(result.figureList[randIndex]);
-    for(int i=0;i<result.figureList.size();i++){
-        //по мат ожиданию все сойдется
-        if ((double(qrand()%100)/100) > mutationFiguresNum)
-            result.figureList[i] = mutateFigure(result.figureList[i]);
+    for(int i=0;i<mutationFiguresNum;i++){
+        int index = qrand()%result.figureList.size();
+        result.figureList[index] = mutateFigure(result.figureList[index]);
     }
+//    for(int i=0;i<result.figureList.size();i++){
+//        //по мат ожиданию все сойдется
+//        if ((double(qrand()%100)/100) > mutationFiguresNum)
+//            result.figureList[i] = mutateFigure(result.figureList[i]);
+//    }
 
     //старый код с рандом мутейтом
 //    for(int i=0;i<result.figureList.size();i++){
@@ -323,6 +329,7 @@ void GeneticAlgorithmProcessor::startIteration(){
 //    sortPopulation();
 //    qDebug() << QString("sortPopulation");
     mutation();
+    mitosis();
     qDebug() << QString("mutation");
     sortPopulation();
     qDebug() << QString("sortPopulation");
@@ -393,14 +400,14 @@ void GeneticAlgorithmProcessor::shake(bool isBig){
 int GeneticAlgorithmProcessor::findWeakestFigure(const GenAlgObject& b){
     GenAlgObject temp(b);
     int weakestIndex = -1;
-    double weakestDiff = -qInf();
+    double weakestDiff = qInf();
     for(int i=0;i<temp.figureList.size();i++){
         double fitnessValueBefore = FitnessFunction(temp);
         double oldRadius = temp.figureList[i].radius;
         temp.figureList[i].radius = 0;
         double fitnessValueAfter = FitnessFunction(temp);
         double diff = fitnessValueAfter - fitnessValueBefore;
-        if (diff > weakestDiff){
+        if (diff < weakestDiff){
             weakestDiff= diff;
             weakestIndex = i;
         }

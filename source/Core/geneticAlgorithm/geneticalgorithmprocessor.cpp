@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QColor>
 #include "math.h"
-#include "mypainter.h"
+#include "figures/mypainter.h"
 GeneticAlgorithmProcessor::GeneticAlgorithmProcessor(): QObject()
 {
     populationSize = 120;

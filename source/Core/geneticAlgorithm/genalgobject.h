@@ -1,10 +1,11 @@
 #ifndef GENALGOBJECT_H
 #define GENALGOBJECT_H
 #include <QImage>
-#include "figure.h"
+#include "figures/figure.h"
 #include <QJsonObject>
 #include <QJsonArray>
-class GenAlgObject
+#include <corelib.h>
+class ROBOPICASSOCORE_LIBRARY_EXPORT GenAlgObject
 {
 public:
     GenAlgObject();

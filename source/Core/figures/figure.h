@@ -12,7 +12,8 @@ enum FigureTypes
 };
 static const QList<QString> FigureTypesNames = QList<QString>() << "SQUARE" << "TRIANGLE" << "CIRCLE";
 
-class Figure
+#include <corelib.h>
+class ROBOPICASSOCORE_LIBRARY_EXPORT Figure
 {
 public:
     Figure();

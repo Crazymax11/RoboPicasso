@@ -2,9 +2,9 @@
 #include <QApplication>
 #include <QDebug>
 #include <QPainter>
-#include "mypainter.h"
-#include "genalgobject.h"
-#include "geneticalgorithmprocessor.h"
+#include "figures/mypainter.h"
+#include "geneticAlgorithm/genalgobject.h"
+#include "geneticAlgorithm/geneticalgorithmprocessor.h"
 #include <QTime>
 #include <QCommandLineParser>
 #include <QFile>

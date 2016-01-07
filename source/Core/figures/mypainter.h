@@ -7,7 +7,8 @@
 
 #include "figure.h"
 
-class MyPainter
+#include <corelib.h>
+class ROBOPICASSOCORE_LIBRARY_EXPORT MyPainter
 {
 public:
     MyPainter();

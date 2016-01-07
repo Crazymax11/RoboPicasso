@@ -1,5 +1,5 @@
 #include "genalgobject.h"
-#include "mypainter.h"
+#include "figures/mypainter.h"
 #include <QDebug>
 GenAlgObject::GenAlgObject(int width, int height)
 {

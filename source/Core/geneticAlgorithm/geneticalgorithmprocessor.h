@@ -4,7 +4,7 @@
 #include <QImage>
 #include "genalgobject.h"
 #include <QObject>
-
+#include <corelib.h>
 
 //model: ["рулетка", "турнир", "каждый с каждым", "каждый с соседом", "каждый с обратным"]
 enum crossoverType {
@@ -17,7 +17,7 @@ enum crossoverType {
 };
 
 
-class GeneticAlgorithmProcessor: public QObject
+class ROBOPICASSOCORE_LIBRARY_EXPORT GeneticAlgorithmProcessor: public QObject
 {
     Q_OBJECT
 signals:

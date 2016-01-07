@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QApplication>
 #include <QQmlApplicationEngine>
-#include "geneticalgorithmprocessor.h"
+#include "geneticAlgorithm/geneticalgorithmprocessor.h"
 #include <QFile>
 #include <QJsonDocument>
 #include <QDebug>

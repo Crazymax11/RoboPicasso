@@ -1,1 +1,8 @@
 builds/*
+bin/*
+deploy/*
+build/*
+*.pro.user
+*.zip
+lib*/*
+*.bat

@@ -70,5 +70,5 @@ void Figure::loadFromJSON(QJsonObject jsonobj){
     angle = jsonobj["angle"].toString().toDouble();
     opacity = jsonobj["opacity"].toString().toDouble();
     QJsonObject colorJSON = jsonobj["color"].toObject();
-    color = qRgb(colorJSON["red"].toString().toInt(), colorJSON["blue"].toString().toInt(), colorJSON["green"].toString().toInt());
+    color = qRgb(colorJSON["red"].toString().toInt(), colorJSON["green"].toString().toInt(), colorJSON["blue"].toString().toInt());
 }

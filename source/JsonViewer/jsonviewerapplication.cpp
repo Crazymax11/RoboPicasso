@@ -22,4 +22,5 @@ void JsonViewerApplication::loadJson(QUrl jsonPath){
     QVariant returnedValue;
     QMetaObject::invokeMethod(rootQML, "updateImage",
             Q_RETURN_ARG(QVariant, returnedValue));
+    jsonFile.close();
 }

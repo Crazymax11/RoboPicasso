@@ -57,7 +57,7 @@ ApplicationWindow {
 
         Slider{
             id: originalSeconds
-            stepSize: 0.25
+            stepSize: 0.1
             value: 2
             minimumValue: 0
             maximumValue: 4
@@ -75,7 +75,7 @@ ApplicationWindow {
 
         Slider{
             id: generationSeconds
-            stepSize: 0.25
+            stepSize: 0.1
             value: 2
             minimumValue: 0
             maximumValue: 4
@@ -93,7 +93,7 @@ ApplicationWindow {
 
         Slider{
             id: transitionSeconds
-            stepSize: 0.25
+            stepSize: 0.1
             value: 2
             minimumValue: 0
             maximumValue: 4

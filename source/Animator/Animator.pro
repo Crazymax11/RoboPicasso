@@ -8,13 +8,14 @@ include( ../../common.pri)
 include( Animator.pri)
 QT +=qml quick widgets gui
 
-TARGET = Robopicasso
+TARGET = RobopicassoAnimator
 
 CONFIG   += c++14
 
 TEMPLATE = app
 
-LIBS += -lrobopicassoCore1$${LIB_SUFFIX}
+LIBS += -lrobopicassoCore$${LIB_SUFFIX}1
+
 
 SOURCES += main.cpp \ 
     animatorapplication.cpp

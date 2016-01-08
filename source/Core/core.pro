@@ -19,7 +19,3 @@ HEADERS += figures/figure.h \
     geneticAlgorithm/geneticalgorithmprocessor.h \
     corelib.h
 
-win32 {
-    QMAKE_TARGET_PRODUCT = Subtitler Lib
-    QMAKE_TARGET_DESCRIPTION = Library for subtitler applications
-}

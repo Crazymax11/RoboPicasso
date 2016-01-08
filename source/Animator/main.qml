@@ -13,6 +13,13 @@ ApplicationWindow {
     title: "Robopicasso Animator"
     property url sourceDirectory
     property url destinationDirectory
+    property url ffmpegPath
+
+    property double originalSecondsVal: originalSeconds.value
+    property double transitionSecondsVal: transitionSeconds.value
+    property double generationSecondsVal: generationSeconds.value
+
+    signal start()
     ColumnLayout{
         anchors.fill: parent
         Button{
@@ -92,6 +99,24 @@ ApplicationWindow {
             maximumValue: 4
             Layout.fillHeight: true
             Layout.fillWidth: true
+        }
+        Button{
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            id: ffmpegBtn
+            text: "ffmpeg путь"
+            onClicked: fdffmpeg.open()
+            FileDialog{
+                id: fdffmpeg
+                onAccepted: root.ffmpegPath= fileUrl
+            }
+        }
+        Button{
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            id: startBtn
+            text: "start"
+            onClicked: root.start()
         }
     }
 }

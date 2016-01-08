@@ -14,7 +14,7 @@ CONFIG   += c++14
 
 TEMPLATE = app
 
-LIBS += -lrobopicassoCore1$${LIB_SUFFIX}
+LIBS += -lrobopicassoCore$${LIB_SUFFIX}1
 
 SOURCES += main.cpp \
     robopicassodesktopapp.cpp \

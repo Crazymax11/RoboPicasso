@@ -3,8 +3,6 @@
 RobopicassoDesktopApp::RobopicassoDesktopApp(int & argc, char ** argv) : QApplication(argc, argv)
 {
 
-    engine.addImageProvider("imageProvider", &imageProvider);
-
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     rootQML = engine.rootObjects()[0];
